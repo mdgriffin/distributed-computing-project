@@ -10,6 +10,8 @@ public class KeyValue {
         this.value = value;
     }
 
+    public KeyValue () {}
+
     public String getKey () {
         return key;
     }

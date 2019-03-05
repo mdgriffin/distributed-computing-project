@@ -1,29 +1,33 @@
 package com.mdgriffin.distributedcomputingproject.common;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
 import java.util.List;
 
 public class Message {
-    private Request operationCode;
-    private Response statusCode;
+    private Request request;
+    private Response response;
     List<KeyValue> headers;
     String body;
 
-    public Message (Request operationCode, Response statusCode, List<KeyValue> headers, String body) {
-        this.operationCode = operationCode;
-        this.statusCode = statusCode;
+    public Message (Request request, Response response, List<KeyValue> headers, String body) {
+        this.request = request;
+        this.response = response;
         this.headers = headers;
         this.body = body;
     }
 
-    public Request getOperationCode() {
-        return operationCode;
+    public Message () {}
+
+    public Request getRequest() {
+        return request;
     }
 
-    public Response getStatusCode() {
-        return statusCode;
+    public Response getResponse() {
+        return response;
     }
 
     public List<KeyValue> getHeaders() {
@@ -37,5 +41,10 @@ public class Message {
     public String toJson () throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(this);
+    }
+
+    public static Message fromJson (String jsonString) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(jsonString, Message.class);
     }
 }
