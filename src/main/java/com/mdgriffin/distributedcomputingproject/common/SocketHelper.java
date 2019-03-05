@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 public class SocketHelper {
 
@@ -15,18 +14,18 @@ public class SocketHelper {
         this.socket = socket;
     }
 
-    public void send (String host, int portNum, String message) throws IOException {
-        byte[] sendBuffer = message.getBytes();
-        InetAddress hostAddress = InetAddress.getByName(host);
+    public void send (DatagramMessage message) throws IOException {
+        byte[] sendBuffer = message.getMessage().getBytes();
+        InetAddress hostAddress = InetAddress.getByName(message.getAddress());
 
-        DatagramPacket packet = new DatagramPacket(sendBuffer, sendBuffer.length, hostAddress, portNum);
+        DatagramPacket packet = new DatagramPacket(sendBuffer, sendBuffer.length, hostAddress, message.getPortNum());
         socket.send(packet);
     }
 
-    public String receive () throws IOException {
+    public DatagramMessage receive () throws IOException {
         byte[] receiveBuffer = new byte[MAX_LEN];
         DatagramPacket datagram = new DatagramPacket(receiveBuffer, MAX_LEN);
         socket.receive(datagram);
-        return new String(receiveBuffer);
+        return new DatagramMessage(new String(receiveBuffer), datagram.getAddress().getHostAddress(), datagram.getPort());
     }
 }

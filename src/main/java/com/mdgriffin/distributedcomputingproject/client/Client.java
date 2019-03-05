@@ -1,5 +1,6 @@
 package com.mdgriffin.distributedcomputingproject.client;
 
+import com.mdgriffin.distributedcomputingproject.common.DatagramMessage;
 import com.mdgriffin.distributedcomputingproject.common.SocketHelper;
 
 import java.io.*;
@@ -14,7 +15,11 @@ public class Client {
             DatagramSocket socket = new DatagramSocket();
             SocketHelper socketHelper = new SocketHelper(socket);
 
-            socketHelper.send("localhost", SERVER_PORT_NUM, "Hello From Client!");
+            socketHelper.send(new DatagramMessage("Hello From Client!", "localhost", SERVER_PORT_NUM));
+
+            DatagramMessage receivedMessage = socketHelper.receive();
+
+            System.out.println(receivedMessage.getMessage());
         } catch (IOException exc) {
             System.out.println(exc);
         }

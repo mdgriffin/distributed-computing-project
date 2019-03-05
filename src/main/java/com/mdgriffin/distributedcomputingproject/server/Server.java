@@ -1,5 +1,6 @@
 package com.mdgriffin.distributedcomputingproject.server;
 
+import com.mdgriffin.distributedcomputingproject.common.DatagramMessage;
 import com.mdgriffin.distributedcomputingproject.common.SocketHelper;
 
 import java.io.IOException;
@@ -17,8 +18,10 @@ public class Server {
             SocketHelper socketHelper = new SocketHelper(datagramSocket);
 
             while (true) {
-                String receivedMessage = socketHelper.receive();
-                System.out.println(receivedMessage);
+                DatagramMessage receivedMessage = socketHelper.receive();
+                System.out.println(receivedMessage.getMessage());
+
+                socketHelper.send(new DatagramMessage("Response from server", receivedMessage.getAddress(), receivedMessage.getPortNum()));
             }
         } catch (IOException exc) {
             System.out.println(exc);
