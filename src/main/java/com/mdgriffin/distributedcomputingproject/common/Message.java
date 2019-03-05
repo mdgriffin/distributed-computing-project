@@ -6,23 +6,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 
 public class Message {
-    private RequestCodes operationCode;
-    private ResponseCodes statusCode;
+    private Request operationCode;
+    private Response statusCode;
     List<KeyValue> headers;
     String body;
 
-    public Message (RequestCodes operationCode, ResponseCodes statusCode, List<KeyValue> headers, String body) {
+    public Message (Request operationCode, Response statusCode, List<KeyValue> headers, String body) {
         this.operationCode = operationCode;
         this.statusCode = statusCode;
         this.headers = headers;
         this.body = body;
     }
 
-    public RequestCodes getOperationCode() {
+    public Request getOperationCode() {
         return operationCode;
     }
 
-    public ResponseCodes getStatusCode() {
+    public Response getStatusCode() {
         return statusCode;
     }
 

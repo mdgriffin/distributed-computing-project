@@ -1,6 +1,6 @@
 package com.mdgriffin.distributedcomputingproject.common;
 
-public enum ResponseCodes {
+public enum Response {
     SUCCESS,
     ERROR,
     DENIED,
