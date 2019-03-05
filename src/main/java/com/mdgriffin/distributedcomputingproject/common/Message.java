@@ -15,4 +15,19 @@ public class Message {
         this.body = body;
     }
 
+    public OperationCodes getOperationCode() {
+        return operationCode;
+    }
+
+    public StatusCodes getStatusCode() {
+        return statusCode;
+    }
+
+    public List<KeyValue> getHeaders() {
+        return headers;
+    }
+
+    public String getBody() {
+        return body;
+    }
 }
