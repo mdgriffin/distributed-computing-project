@@ -8,7 +8,7 @@ import java.net.InetAddress;
 public class SocketHelper {
 
     private DatagramSocket socket;
-    private static final int MAX_LEN = 100;
+    private static final int MAX_LEN = 200;
 
     public SocketHelper (DatagramSocket socket) {
         this.socket = socket;
