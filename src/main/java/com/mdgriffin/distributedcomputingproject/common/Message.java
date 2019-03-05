@@ -1,5 +1,8 @@
 package com.mdgriffin.distributedcomputingproject.common;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.List;
 
 public class Message {
@@ -29,5 +32,10 @@ public class Message {
 
     public String getBody() {
         return body;
+    }
+
+    public String toJson () throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(this);
     }
 }

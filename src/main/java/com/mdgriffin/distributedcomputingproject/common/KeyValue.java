@@ -10,11 +10,13 @@ public class KeyValue {
         this.value = value;
     }
 
-    public String key () {
+    public String getKey () {
         return key;
     }
 
-    public String value () {
+    public String getValue () {
         return value;
     }
+
+
 }
