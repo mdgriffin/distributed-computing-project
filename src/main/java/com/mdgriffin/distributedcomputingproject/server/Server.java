@@ -1,31 +1,31 @@
 package com.mdgriffin.distributedcomputingproject.server;
 
+import com.mdgriffin.distributedcomputingproject.common.SocketHelper;
+
 import java.io.IOException;
-import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.SocketException;
 
 public class Server {
 
     private static final int PORT_NUM = 9090;
-    private static final int MAX_LEN = 100;
 
     public static void main(String[] args) {
         System.out.println("Server Ready for connections");
 
-        Server server = new Server();
-
         try {
             DatagramSocket datagramSocket = new DatagramSocket(PORT_NUM);
+            SocketHelper socketHelper = new SocketHelper(datagramSocket);
 
             while (true) {
-                server.receiveMessage(datagramSocket);
+                String receivedMessage = socketHelper.receive();
+                System.out.println(receivedMessage);
             }
-        } catch (SocketException exc) {
-            System.out.println(exc.getMessage());
+        } catch (IOException exc) {
+            System.out.println(exc);
         }
     }
 
+    /*
     private void receiveMessage (DatagramSocket datagramSocket) {
         try {
             byte[] receiveBuffer = new byte[MAX_LEN];
@@ -38,4 +38,5 @@ public class Server {
             System.out.println(exc.getMessage());
         }
     }
+    */
 }
