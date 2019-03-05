@@ -25,18 +25,4 @@ public class Server {
         }
     }
 
-    /*
-    private void receiveMessage (DatagramSocket datagramSocket) {
-        try {
-            byte[] receiveBuffer = new byte[MAX_LEN];
-            DatagramPacket datagram = new DatagramPacket(receiveBuffer, MAX_LEN);
-            datagramSocket.receive(datagram);
-            String message = new String(receiveBuffer);
-
-            System.out.println("Received Message: " + message);
-        } catch (IOException exc) {
-            System.out.println(exc.getMessage());
-        }
-    }
-    */
 }

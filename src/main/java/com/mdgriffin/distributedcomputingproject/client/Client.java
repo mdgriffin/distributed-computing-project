@@ -20,19 +20,4 @@ public class Client {
         }
     }
 
-    /*
-    private void sendMessage (DatagramSocket socket, String message) {
-        try {
-            byte[ ] sendBuffer = message.getBytes( );
-            InetAddress serverHost = InetAddress.getByName("localhost");
-
-            DatagramPacket packet = new DatagramPacket(sendBuffer, sendBuffer.length, serverHost, 9090);
-            socket.send(packet);
-        } catch (UnknownHostException exc) {
-            System.out.println(exc);
-        } catch (IOException exc) {
-            System.out.println(exc);
-        }
-    }
-    */
 }
