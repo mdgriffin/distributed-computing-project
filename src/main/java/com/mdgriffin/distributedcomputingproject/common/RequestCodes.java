@@ -1,6 +1,6 @@
 package com.mdgriffin.distributedcomputingproject.common;
 
-public enum OperationCodes {
+public enum RequestCodes {
     LOGIN(100),
     LOGOFF(101),
     UPLOAD(102),
@@ -9,7 +9,7 @@ public enum OperationCodes {
 
     private int code;
 
-    OperationCodes(int code) {
+    RequestCodes(int code) {
         this.code = code;
     }
 

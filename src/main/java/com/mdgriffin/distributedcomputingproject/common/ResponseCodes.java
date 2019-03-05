@@ -1,6 +1,6 @@
 package com.mdgriffin.distributedcomputingproject.common;
 
-public enum StatusCodes {
+public enum ResponseCodes {
     SUCCESS(101),
     ERROR(102),
     DENIED(103),
@@ -8,7 +8,7 @@ public enum StatusCodes {
 
     private int code;
 
-    StatusCodes (int code) {
+    ResponseCodes(int code) {
         this.code = code;
     }
 

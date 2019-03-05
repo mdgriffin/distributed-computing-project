@@ -13,8 +13,8 @@ public class MessageTest {
     @Test
     public void withValidMessage_jsonGeneratedCorrectly () {
         Message message = new Message(
-            OperationCodes.LIST,
-            StatusCodes.SUCCESS,
+            RequestCodes.LIST,
+            ResponseCodes.SUCCESS,
             Arrays.asList(new KeyValue("testKey", "testValue")),
         "Body Test"
         );
