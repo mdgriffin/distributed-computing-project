@@ -7,7 +7,6 @@ public class ListAuthentication implements  Authentication {
 
     private Map<String, String> validUsers;
 
-
     public ListAuthentication () {
         validUsers = new HashMap<>();
         validUsers.put("jdoe", "password123");
@@ -23,5 +22,4 @@ public class ListAuthentication implements  Authentication {
 
         return false;
     }
-
 }
