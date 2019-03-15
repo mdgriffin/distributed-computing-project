@@ -31,7 +31,7 @@ public class Client {
                 null,
                 Arrays.asList(
                         new KeyValue("username", "jdoe"),
-                        new KeyValue("password", "testing123")
+                        new KeyValue("password", "password123")
                 ),
                 ""
         ).toJson(), "localhost", SERVER_PORT_NUM));
