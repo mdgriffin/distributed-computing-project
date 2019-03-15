@@ -1,6 +1,7 @@
 package com.mdgriffin.distributedcomputingproject.client;
 
 import com.mdgriffin.distributedcomputingproject.common.*;
+import com.mdgriffin.distributedcomputingproject.server.Authentication;
 
 import java.io.*;
 import java.net.*;
