@@ -20,7 +20,7 @@ public class Server {
 
     public Server () {
         System.out.println("Server Ready for connections");
-        authentication = new FileAuthentication();
+        authentication = new ListAuthentication();
         listen();
     }
 
