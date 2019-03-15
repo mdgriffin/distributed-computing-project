@@ -7,7 +7,11 @@ public interface FileSystem {
 
     void readFile();
 
-    void createDirectory();
+    boolean createDirectory(String path, String dirName);
 
     List<String> listDirectory (String path);
+
+    boolean directoryExists (String path);
+
+    boolean fileExists (String path);
 }

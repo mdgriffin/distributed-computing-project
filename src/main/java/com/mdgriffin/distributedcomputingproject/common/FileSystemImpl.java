@@ -15,8 +15,8 @@ public class FileSystemImpl implements FileSystem {
 
     }
 
-    public void createDirectory () {
-
+    public boolean createDirectory (String path, String dirName) {
+        return new File(path + dirName).mkdirs();
     }
 
     public List<String> listDirectory (String path) {
@@ -31,6 +31,18 @@ public class FileSystemImpl implements FileSystem {
         }
 
         return fileNames;
+    }
+
+    @Override
+    public boolean directoryExists(String path) {
+        File tempFile = new File(path);
+        return tempFile.exists() && tempFile.isDirectory();
+    }
+
+    @Override
+    public boolean fileExists (String path) {
+        File tempFile = new File(path);
+        return tempFile.exists() && tempFile.isFile();
     }
 
 }
