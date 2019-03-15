@@ -1,13 +1,18 @@
 package com.mdgriffin.distributedcomputingproject.common;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface FileSystem {
-    void saveFile();
+    void saveFile(String path, byte[] data) throws IOException;
 
-    void readFile();
+    byte[] readFile();
 
-    boolean createDirectory(String path, String dirName);
+    void deleteFile (String path);
+
+    boolean createDirectory(String path);
+
+    boolean deleteDirectory (String path);
 
     List<String> listDirectory (String path);
 

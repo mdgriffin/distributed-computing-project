@@ -5,20 +5,28 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FileSystemTest {
 
-    private FileSystem fs = new FileSystemImpl();
+    private static final String TEST_PATH = "/DC_Test/";
 
-    private static final String TEST_PATH = "/DC_Test";
+    private static FileSystem fs = new FileSystemImpl(TEST_PATH);
 
     @BeforeAll
     public static void setup () {
-        new File(TEST_PATH).mkdirs();
+        try {
+            fs.saveFile("test1.txt", "Hello World".getBytes());
+            fs.saveFile("test2.txt", "Hello World".getBytes());
+            fs.saveFile("test3.txt", "Hello World".getBytes());
+        } catch (IOException exc) {
+            System.out.println(exc);
+            fail();
+        }
     }
 
     @BeforeEach
@@ -28,21 +36,22 @@ public class FileSystemTest {
 
     @Test
     public void canRetrieveDirectoryContents () {
-        List<String> directoryListing = fs.listDirectory("./");
+        List<String> directoryListing = fs.listDirectory("");
 
         assertEquals(3, directoryListing.size());
-        assertEquals(true, directoryListing.contains(".gitignore"));
+        assertEquals(true, directoryListing.contains("test1.txt"));
     }
 
     @Test
     public void canCreateDirectory () {
-       boolean result = fs.createDirectory("/", "temp_testing");
+       boolean result = fs.createDirectory("/temp_testing");
        assertEquals(true, result);
      }
 
     @Test
     public void whenDirectoryExists_existsCheck_returnsTrue () {
-        boolean result = fs.directoryExists("/Users");
+        fs.createDirectory("/temp_testing");
+        boolean result = fs.directoryExists("/temp_testing");
         assertEquals(true, result);
     }
 
@@ -54,7 +63,7 @@ public class FileSystemTest {
 
     @Test
     public void whenFileExists_existsCheck_returnsTrue () {
-        boolean result = fs.fileExists("/windows-version.txt");
+        boolean result = fs.fileExists("/test1.txt");
         assertEquals(true, result);
     }
 
@@ -67,5 +76,9 @@ public class FileSystemTest {
     @AfterAll
     public static void cleanUp () {
         System.out.println("Clean up after all tests");
+        fs.deleteFile("file1.txt");
+        fs.deleteFile("file2.txt");
+        fs.deleteFile("file3.txt");
+        fs.deleteDirectory("/temp_testing");
     }
 }
