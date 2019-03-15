@@ -2,12 +2,10 @@ package com.mdgriffin.distributedcomputingproject.common;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class FileSystemImpl implements FileSystem {
@@ -30,8 +28,12 @@ public class FileSystemImpl implements FileSystem {
     }
 
     @Override
-    public void deleteFile(String path) {
-
+    public boolean deleteFile(String path) {
+        if (fileExists(path)) {
+            File file  = new File(basePath + path);
+            return file.delete();
+        }
+        return false;
     }
 
     @Override
@@ -44,17 +46,26 @@ public class FileSystemImpl implements FileSystem {
 
     @Override
     public boolean deleteDirectory(String path) {
+        if (directoryExists(path) && listDirectory(path).size() == 0) {
+            File dir = new File(this.basePath + path);
+            return dir.delete();
+        }
         return false;
     }
 
     @Override
     public List<String> listDirectory (String path) {
+        return listDirectory(path, false);
+    }
+
+    @Override
+    public List<String> listDirectory (String path, boolean includeDirectories) {
         List<String> fileNames = new ArrayList<String>();
         File directory = new File(this.basePath + path);
         File[] fileList = directory.listFiles();
 
         for (File file: fileList) {
-            if (file.isFile()) {
+            if (includeDirectories || file.isFile()) {
                 fileNames.add(file.getName());
             }
         }

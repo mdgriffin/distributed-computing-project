@@ -8,13 +8,15 @@ public interface FileSystem {
 
     byte[] readFile();
 
-    void deleteFile (String path);
+    boolean deleteFile (String path);
 
     boolean createDirectory(String path);
 
     boolean deleteDirectory (String path);
 
     List<String> listDirectory (String path);
+
+    List<String> listDirectory (String path, boolean includeDirectories);
 
     boolean directoryExists (String path);
 

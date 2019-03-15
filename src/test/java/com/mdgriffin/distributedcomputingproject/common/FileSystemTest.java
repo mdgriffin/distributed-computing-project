@@ -2,7 +2,6 @@ package com.mdgriffin.distributedcomputingproject.common;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -19,6 +18,7 @@ public class FileSystemTest {
 
     @BeforeAll
     public static void setup () {
+        System.out.println("Setup before tests");
         try {
             fs.saveFile("test1.txt", "Hello World".getBytes());
             fs.saveFile("test2.txt", "Hello World".getBytes());
@@ -29,9 +29,19 @@ public class FileSystemTest {
         }
     }
 
-    @BeforeEach
-    public void beforeEach () {
-        // To-Do: Delete the test directory
+    @Test
+    public void canSaveFile () {
+        // TODO:
+    }
+
+    @Test
+    public void canReadFile () {
+        // TODO:
+    }
+
+    @Test
+    public void canDeleteFile () {
+        // TODO:
     }
 
     @Test
@@ -40,6 +50,11 @@ public class FileSystemTest {
 
         assertEquals(3, directoryListing.size());
         assertEquals(true, directoryListing.contains("test1.txt"));
+    }
+
+    @Test
+    public void canRetrieveDirectoryContents_withSubdirectories () {
+        // TODO:
     }
 
     @Test
@@ -76,9 +91,9 @@ public class FileSystemTest {
     @AfterAll
     public static void cleanUp () {
         System.out.println("Clean up after all tests");
-        fs.deleteFile("file1.txt");
-        fs.deleteFile("file2.txt");
-        fs.deleteFile("file3.txt");
+        fs.deleteFile("test1.txt");
+        fs.deleteFile("test2.txt");
+        fs.deleteFile("test3.txt");
         fs.deleteDirectory("/temp_testing");
     }
 }
