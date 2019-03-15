@@ -20,9 +20,7 @@ public class Server {
 
     public Server () {
         System.out.println("Server Ready for connections");
-
-        authentication = new Authentication();
-
+        authentication = new FileAuthentication();
         listen();
     }
 
@@ -78,7 +76,6 @@ public class Server {
                 ""
             ).toJson(), datagramMessage.getAddress(), datagramMessage.getPortNum()));
         }
-
     }
 
 }
