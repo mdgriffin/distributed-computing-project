@@ -1,0 +1,29 @@
+actor Client
+boundary Server
+control Foo3
+entity Foo4
+database Foo5
+
+@startuml
+actor Client
+entity Server
+database Datastore
+database FileSystem
+
+group Login
+    Client -> Server: LOGIN Request
+
+    Server -> Datastore: Check username and password
+
+    group Login Success
+        Datastore --> Server: Is registered user
+        Server --> Client: SUCCESS Response
+        Server --> Client: Session Key
+    end
+
+    group Login Failure
+        Datastore --> Server: Is not registered user
+        Server --> Client: ERROR Response
+    end
+end
+@enduml
