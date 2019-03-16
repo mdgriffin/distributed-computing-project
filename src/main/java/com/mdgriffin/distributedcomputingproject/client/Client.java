@@ -5,6 +5,7 @@ import com.mdgriffin.distributedcomputingproject.common.*;
 import java.io.*;
 import java.net.*;
 import java.util.Arrays;
+import java.util.NoSuchElementException;
 
 public class Client {
 
@@ -40,10 +41,16 @@ public class Client {
 
         Message serverResponse = Message.fromJson(receivedMessage.getMessage());
 
-        if (serverResponse.getResponse().equals(Response.SUCCESS)) {
-            System.out.println("Successfully Logged In");
-        } else {
-            System.out.println("Failed to Login");
+        try {
+            if (serverResponse.getResponse().equals(Response.SUCCESS)) {
+                String sessionId = serverResponse.getHeaders().stream().filter(name -> name.getKey().equals("session_id")).findFirst().orElseThrow(() -> new NoSuchElementException()).getValue();
+
+                System.out.println("Successfully Logged In with session_id of " + sessionId);
+            } else {
+                System.out.println("Failed to Login");
+            }
+        } catch (NoSuchElementException exc) {
+            System.out.println("No session id returned from server");
         }
     }
 

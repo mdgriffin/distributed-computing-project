@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.net.DatagramSocket;
 import java.security.InvalidParameterException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Server {
 
@@ -13,6 +15,7 @@ public class Server {
     private DatagramSocket datagramSocket;
     private SocketHelper socketHelper;
     private Authentication authentication;
+    private Map<String, Session> sessions;
 
     public static void main(String[] args) {
         Server server = new Server();
@@ -21,6 +24,7 @@ public class Server {
     public Server () {
         System.out.println("Server Ready for connections");
         authentication = new ListAuthentication();
+        sessions = new HashMap<>();
         listen();
     }
 
@@ -54,10 +58,17 @@ public class Server {
             String password = message.getHeaders().stream().filter(name -> name.getKey().equals("password")).findFirst().orElseThrow(() -> new InvalidParameterException()).getValue();
 
             if (authentication.isValidUser(username, password)) {
+                Session session = new SessionImpl(username);
+                sessions.put(session.getId(), session);
+
                 socketHelper.send(new DatagramMessage(new Message(
                     message.getRequest(),
                     Response.SUCCESS,
-                    Arrays.asList(new KeyValue("message", "You have successfully logged in")),
+                    Arrays.asList(
+                        new KeyValue("message", "You have successfully logged in"),
+                        new KeyValue("session_id", session.getId())
+
+                    ),
                     ""
                 ).toJson(), datagramMessage.getAddress(), datagramMessage.getPortNum()));
             } else {
