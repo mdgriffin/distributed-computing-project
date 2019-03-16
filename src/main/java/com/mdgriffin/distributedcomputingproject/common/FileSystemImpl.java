@@ -12,7 +12,7 @@ public class FileSystemImpl implements FileSystem {
 
     private String basePath;
 
-    FileSystemImpl (String basePath) {
+    public FileSystemImpl (String basePath) {
         this.basePath = basePath;
     }
 

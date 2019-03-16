@@ -10,6 +10,10 @@ import java.util.NoSuchElementException;
 public class Client {
 
     private static final int SERVER_PORT_NUM = 9090;
+    private static final String USERNAME = "jdoe";
+    private static final String PASSWORD = "password123";
+
+    private String sessionId;
 
     public static void main(String[] args) {
         Client client = new Client();
@@ -18,8 +22,35 @@ public class Client {
     public Client () {
         try {
             login();
+            listFiles();
         } catch (IOException exc) {
             System.out.println(exc);
+        }
+    }
+
+    private void listFiles () throws IOException {
+        if (isLoggedIn()) {
+            // TODO DatagramSocket creation could be moved to SocketHelper
+            DatagramSocket socket = new DatagramSocket();
+            SocketHelper socketHelper = new SocketHelper(socket);
+
+            socketHelper.send(new DatagramMessage(new Message(
+                    Request.LIST,
+                    null,
+                    Arrays.asList(
+                        new KeyValue("username", USERNAME),
+                        new KeyValue("session_id", sessionId)
+                    ),
+                    ""
+            ).toJson(), "localhost", SERVER_PORT_NUM));
+
+            Message serverResponse = Message.fromJson(socketHelper.receive().getMessage());
+
+            if (serverResponse.getResponse().equals(Response.SUCCESS)) {
+                System.out.println("Got Response from Server:\n" + serverResponse.getBody());
+            } else {
+                System.out.println("Login Response: " + serverResponse.getResponse());
+            }
         }
     }
 
@@ -31,19 +62,17 @@ public class Client {
                 Request.LOGIN,
                 null,
                 Arrays.asList(
-                        new KeyValue("username", "jdoe"),
-                        new KeyValue("password", "password123")
+                    new KeyValue("username", USERNAME),
+                    new KeyValue("password", PASSWORD)
                 ),
                 ""
         ).toJson(), "localhost", SERVER_PORT_NUM));
 
-        DatagramMessage receivedMessage = socketHelper.receive();
-
-        Message serverResponse = Message.fromJson(receivedMessage.getMessage());
+        Message serverResponse = Message.fromJson(socketHelper.receive().getMessage());
 
         try {
             if (serverResponse.getResponse().equals(Response.SUCCESS)) {
-                String sessionId = serverResponse.getHeaders().stream().filter(name -> name.getKey().equals("session_id")).findFirst().orElseThrow(() -> new NoSuchElementException()).getValue();
+                sessionId = serverResponse.getHeaders().stream().filter(name -> name.getKey().equals("session_id")).findFirst().orElseThrow(() -> new NoSuchElementException()).getValue();
 
                 System.out.println("Successfully Logged In with session_id of " + sessionId);
             } else {
@@ -52,6 +81,10 @@ public class Client {
         } catch (NoSuchElementException exc) {
             System.out.println("No session id returned from server");
         }
+    }
+
+    private boolean isLoggedIn () {
+        return sessionId != null;
     }
 
 }
