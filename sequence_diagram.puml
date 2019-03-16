@@ -11,19 +11,38 @@ database Datastore
 database FileSystem
 
 group Login
-    Client -> Server: LOGIN Request
+    Client -> Server: **LOGIN** Request
 
     Server -> Datastore: Check username and password
 
     group Login Success
         Datastore --> Server: Is registered user
-        Server --> Client: SUCCESS Response
+        Server --> Client: **SUCCESS** Response
         Server --> Client: Session Key
     end
 
     group Login Failure
         Datastore --> Server: Is not registered user
-        Server --> Client: ERROR Response
+        Server --> Client: **ERROR** Response
+    end
+end
+
+
+group List Files
+
+    Client -> Server: **LIST** Request
+    Client -> Server: Session Key
+    Server -> Datastore: Get Session Key
+    Server -> Server: Check session key
+
+    group List Granted
+        Server --> FileSystem: Get list of Files
+        FileSystem -> Server: List of files
+        Server --> Client: File Listing
+    end
+
+    group List Denied
+        Server -> Client: **DENIED** Response
     end
 end
 @enduml
