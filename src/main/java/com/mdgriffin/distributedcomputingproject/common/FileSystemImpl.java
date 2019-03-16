@@ -18,13 +18,13 @@ public class FileSystemImpl implements FileSystem {
 
     @Override
     public void saveFile (String path, byte[] data) throws IOException {
-        Path file = Paths.get(this.basePath + path);
+        Path file = Paths.get(basePath + path);
         Files.write(file, data);
     }
 
     @Override
-    public byte[] readFile () {
-        return new byte[]{};
+    public byte[] readFile (String path)  throws IOException {
+        return Files.readAllBytes(Paths.get(basePath, path));
     }
 
     @Override
@@ -39,7 +39,7 @@ public class FileSystemImpl implements FileSystem {
     @Override
     public boolean createDirectory (String path) {
         if (!directoryExists(path)) {
-            return new File(this.basePath + path).mkdirs();
+            return new File(basePath + path).mkdirs();
         }
         return true;
     }
@@ -47,7 +47,7 @@ public class FileSystemImpl implements FileSystem {
     @Override
     public boolean deleteDirectory(String path) {
         if (directoryExists(path) && listDirectory(path).size() == 0) {
-            File dir = new File(this.basePath + path);
+            File dir = new File(basePath + path);
             return dir.delete();
         }
         return false;
@@ -61,7 +61,7 @@ public class FileSystemImpl implements FileSystem {
     @Override
     public List<String> listDirectory (String path, boolean includeDirectories) {
         List<String> fileNames = new ArrayList<String>();
-        File directory = new File(this.basePath + path);
+        File directory = new File(basePath + path);
         File[] fileList = directory.listFiles();
 
         for (File file: fileList) {
@@ -75,13 +75,13 @@ public class FileSystemImpl implements FileSystem {
 
     @Override
     public boolean directoryExists(String path) {
-        File tempFile = new File(this.basePath + path);
+        File tempFile = new File(basePath + path);
         return tempFile.exists() && tempFile.isDirectory();
     }
 
     @Override
     public boolean fileExists (String path) {
-        File tempFile = new File(this.basePath + path);
+        File tempFile = new File(basePath + path);
         return tempFile.exists() && tempFile.isFile();
     }
 }

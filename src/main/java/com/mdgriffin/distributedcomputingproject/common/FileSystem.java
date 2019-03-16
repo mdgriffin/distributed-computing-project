@@ -6,7 +6,7 @@ import java.util.List;
 public interface FileSystem {
     void saveFile(String path, byte[] data) throws IOException;
 
-    byte[] readFile();
+    byte[] readFile(String path)  throws IOException;
 
     boolean deleteFile (String path);
 

@@ -5,9 +5,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class FileSystemTest {
@@ -18,7 +20,6 @@ public class FileSystemTest {
 
     @BeforeAll
     public static void setup () {
-        System.out.println("Setup before tests");
         try {
             fs.saveFile("test1.txt", "Hello World".getBytes());
             fs.saveFile("test2.txt", "Hello World".getBytes());
@@ -29,19 +30,44 @@ public class FileSystemTest {
         }
     }
 
+    @AfterAll
+    public static void cleanUp () {
+        fs.deleteFile("test1.txt");
+        fs.deleteFile("test2.txt");
+        fs.deleteFile("test3.txt");
+        fs.deleteDirectory("/temp_testing");
+    }
+
     @Test
-    public void canSaveFile () {
-        // TODO:
+    public void canSaveAndDeleteFile () {
+        try {
+            int numInDirectory = fs.listDirectory("").size();
+            fs.saveFile("test4.txt", "Hello World".getBytes());
+            int numInDirectoryAfterSave = fs.listDirectory("").size();
+
+            assertEquals(numInDirectory + 1, numInDirectoryAfterSave);
+
+            assertTrue(fs.deleteFile("test4.txt"));
+
+            int numInDirectoryAfterDelete = fs.listDirectory("").size();
+            assertEquals(numInDirectory, numInDirectoryAfterDelete);
+        } catch (IOException exc) {
+            fail();
+        }
     }
 
     @Test
     public void canReadFile () {
-        // TODO:
-    }
+        try {
+            byte[] fileBytes = fs.readFile("test3.txt");
+            String fileStr = new String(fileBytes, StandardCharsets.UTF_8);
 
-    @Test
-    public void canDeleteFile () {
-        // TODO:
+            assertTrue(fileBytes.length > 0);
+            assertEquals("Hello World", fileStr);
+        } catch (IOException exc) {
+            System.out.println(exc);
+            fail();
+        }
     }
 
     @Test
@@ -54,7 +80,26 @@ public class FileSystemTest {
 
     @Test
     public void canRetrieveDirectoryContents_withSubdirectories () {
-        // TODO:
+        String testDir1 = "temp_testing1";
+        String testDir2 = "temp_testing2";
+
+        List<String> directoryListingBefore = fs.listDirectory("", true);
+
+        fs.createDirectory(testDir1);
+        fs.createDirectory(testDir2);
+
+        List<String> directoryListingAfter = fs.listDirectory("", true);
+
+        assertEquals(directoryListingBefore.size() + 2, directoryListingAfter.size());
+        assertTrue(directoryListingAfter.contains(testDir1));
+        assertTrue(directoryListingAfter.contains(testDir2));
+
+        fs.deleteDirectory(testDir1);
+        fs.deleteDirectory(testDir2);
+
+        List<String> directoryListingAfterDelete = fs.listDirectory("", true);
+
+        assertEquals(directoryListingBefore.size(), directoryListingAfterDelete.size());
     }
 
     @Test
@@ -88,12 +133,4 @@ public class FileSystemTest {
         assertEquals(false, result);
     }
 
-    @AfterAll
-    public static void cleanUp () {
-        System.out.println("Clean up after all tests");
-        fs.deleteFile("test1.txt");
-        fs.deleteFile("test2.txt");
-        fs.deleteFile("test3.txt");
-        fs.deleteDirectory("/temp_testing");
-    }
 }
