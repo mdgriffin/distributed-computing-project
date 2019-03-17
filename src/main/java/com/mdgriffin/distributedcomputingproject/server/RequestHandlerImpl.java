@@ -3,8 +3,10 @@ package com.mdgriffin.distributedcomputingproject.server;
 import com.mdgriffin.distributedcomputingproject.common.*;
 
 import javax.security.auth.login.AccountNotFoundException;
+import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 
 public class RequestHandlerImpl implements RequestHandler {
@@ -73,6 +75,43 @@ public class RequestHandlerImpl implements RequestHandler {
                     message.getRequest(),
                     Response.ERROR,
                     Arrays.asList(new KeyValue("message", "Must supply valid username and session ID")),
+                    ""
+            );
+        }
+    }
+
+    @Override
+    public Message upload (Message message) {
+        try {
+            String username = message.getHeaders().stream().filter(name -> name.getKey().equals("username")).findFirst().orElseThrow(() -> new InvalidParameterException()).getValue();
+            String sessionId = message.getHeaders().stream().filter(name -> name.getKey().equals("session_id")).findFirst().orElseThrow(() -> new InvalidParameterException()).getValue();
+            String filename = message.getHeaders().stream().filter(name -> name.getKey().equals("filename")).findFirst().orElseThrow(() -> new InvalidParameterException()).getValue();
+
+            if (!authentication.hasActiveSession(username, sessionId)) {
+                throw new InvalidParameterException();
+            }
+
+            FileSystem fs = new FileSystemImpl(ROOT_DIRECTORY + username + "/");
+            fs.saveFile(filename, Base64.getDecoder().decode(message.getBody()));
+
+            return new Message(
+                    message.getRequest(),
+                    Response.SUCCESS,
+                    Arrays.asList(new KeyValue("message", "Successfully uploaded file")),
+                    ""
+            );
+        } catch (InvalidParameterException exc) {
+            return new Message(
+                    message.getRequest(),
+                    Response.ERROR,
+                    Arrays.asList(new KeyValue("message", "Must supply valid username and session ID")),
+                    ""
+            );
+        } catch (IOException exc) {
+            return new Message(
+                    message.getRequest(),
+                    Response.ERROR,
+                    Arrays.asList(new KeyValue("message", "Error Saving File")),
                     ""
             );
         }

@@ -23,8 +23,37 @@ public class Client {
         try {
             login();
             listFiles();
+            upload();
         } catch (IOException exc) {
             System.out.println(exc);
+        }
+    }
+
+    private void upload () throws IOException {
+        if (isLoggedIn()) {
+            DatagramSocket socket = new DatagramSocket();
+            SocketHelper socketHelper = new SocketHelper(socket);
+
+            socketHelper.send(new DatagramMessage(new Message(
+                    Request.UPLOAD,
+                    null,
+                    Arrays.asList(
+                        new KeyValue("username", USERNAME),
+                        new KeyValue("session_id", sessionId),
+                        new KeyValue("filename", "example3.txt")
+                    ),
+                    // "Hello World" base64 encoded
+                    "SGVsbG8gV29ybGQh"
+            ).toJson(), "localhost", SERVER_PORT_NUM));
+
+            Message serverResponse = Message.fromJson(socketHelper.receive().getMessage());
+            String message = serverResponse.getHeaders().stream().filter(name -> name.getKey().equals("message")).findFirst().orElseThrow(() -> new NoSuchElementException()).getValue();
+
+            if (serverResponse.getResponse().equals(Response.SUCCESS)) {
+                System.out.println("Got Response from Server:\n" + message);
+            } else {
+                System.out.println("Upload Response: " + serverResponse.getResponse());
+            }
         }
     }
 
@@ -32,6 +61,7 @@ public class Client {
         if (isLoggedIn()) {
             // TODO DatagramSocket creation could be moved to SocketHelper
             DatagramSocket socket = new DatagramSocket();
+            // TODO: Initialize Socket Helper with port number and address, removing the need for passing the datagram
             SocketHelper socketHelper = new SocketHelper(socket);
 
             socketHelper.send(new DatagramMessage(new Message(

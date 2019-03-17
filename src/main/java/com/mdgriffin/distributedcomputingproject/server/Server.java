@@ -43,6 +43,9 @@ public class Server {
                     case LIST:
                         handleList(receivedMessage, message);
                         break;
+                    case UPLOAD:
+                        handleUpload(receivedMessage, message);
+                        break;
                     default:
                         break;
                 }
@@ -50,6 +53,11 @@ public class Server {
         } catch (Exception exc) {
             System.out.println(exc);
         }
+    }
+
+    private void handleUpload (DatagramMessage datagramMessage, Message message) throws IOException {
+        Message result = requestHandler.upload(message);
+        socketHelper.send(new DatagramMessage(result.toJson(), datagramMessage.getAddress(), datagramMessage.getPortNum()));
     }
 
     private void handleList (DatagramMessage datagramMessage, Message message) throws IOException {

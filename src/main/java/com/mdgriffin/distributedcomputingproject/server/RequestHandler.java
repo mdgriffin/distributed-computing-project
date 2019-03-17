@@ -8,4 +8,6 @@ public interface RequestHandler {
 
     Message list (Message message);
 
+    Message upload (Message message);
+
 }
