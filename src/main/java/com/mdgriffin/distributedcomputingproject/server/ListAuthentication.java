@@ -2,6 +2,7 @@ package com.mdgriffin.distributedcomputingproject.server;
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.nio.file.AccessDeniedException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,8 +33,7 @@ public class ListAuthentication implements  Authentication {
     public boolean hasActiveSession(String username, String sessionId) {
         if (sessions.containsKey(sessionId)) {
             Session session = sessions.get(sessionId);
-            return session.getUsername().equals(username);
-            // TODO: Check expiry
+            return session.getUsername().equals(username) && session.getExpiry().after(new Date());
         }
 
         return false;

@@ -7,7 +7,7 @@
 - [x] Basic Working Client-Server communication
 - [ ] Login Functionality
     - [X] Sessions
-        - [ ] Session Expiry
+        - [X] Session Expiry
 - [X] Saving File
     - [X] Session Validation
     - [X] Base64 Encode
