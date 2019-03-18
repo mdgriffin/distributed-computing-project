@@ -10,19 +10,29 @@ public class Client {
     private static final String PASSWORD = "password123";
     private static final String ROOT_DIRECTORY = "/DC_Temp/DC_Client/";
 
+    private ClientHandler clientHandler;
+
     public static void main(String[] args) {
-        Client client = new Client();
+        try {
+            Client client = new Client(new ClientHandlerImpl(USERNAME, PASSWORD, SERVER_HOSTNAME, SERVER_PORT_NUM));
+            client.start();
+        } catch (IOException exc) {
+            System.out.println("Issue connecting to client: " + exc.getMessage());
+        }
     }
 
-    public Client () {
+    public Client (ClientHandler clientHandler) {
+        this.clientHandler = clientHandler;
+    }
+
+    public void start() {
         try {
-            ClientHandler clientHandler = new ClientHandlerImpl(USERNAME, PASSWORD, SERVER_HOSTNAME, SERVER_PORT_NUM);
             clientHandler.login();
             clientHandler.list();
             clientHandler.upload(ROOT_DIRECTORY, "user_upload_01.txt");
             clientHandler.download( ROOT_DIRECTORY,"user_upload_01.txt", "user_download_02.txt");
         } catch (IOException exc) {
-            System.out.println(exc);
+            System.out.println(exc.getMessage());
         }
     }
 
