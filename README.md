@@ -6,24 +6,24 @@
 - [x] Create Client
 - [x] Basic Working Client-Server communication
 - [ ] Login Functionality
-    - [ ] Sessions
+    - [X] Sessions
         - [ ] Session Expiry
-- [ ] Saving File
-    - [ ] Session Validation
-    - [ ] Base64 Encode
-    - [ ] Send File to server
-    - [ ] Base64 Decode
-    - [ ] Save File to user directory
-- [ ] Get File
-    - [ ] Session Validation
-    - [ ] Read file from user directory
-    - [ ] Base64 Encode
-    - [ ] Send file to client
-    - [ ]  Base64 Decode
-- [ ] Listing Files
-    - [ ] Session Validation
-    - [ ] Getting files from user directory
-    - [ ] Sending list to client
+- [X] Saving File
+    - [X] Session Validation
+    - [X] Base64 Encode
+    - [X] Send File to server
+    - [X] Base64 Decode
+    - [X] Save File to user directory
+- [X] Get File
+    - [X] Session Validation
+    - [X] Read file from user directory
+    - [X] Base64 Encode
+    - [X] Send file to client
+    - [X]  Base64 Decode
+- [X] Listing Files
+    - [X] Session Validation
+    - [X] Getting files from user directory
+    - [X] Sending list to client
 - [ ] Presentation
     - [ ] Decide on type of application
         - [ ] Swing
