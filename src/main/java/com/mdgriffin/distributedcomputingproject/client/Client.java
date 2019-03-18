@@ -5,6 +5,7 @@ import com.mdgriffin.distributedcomputingproject.common.*;
 import java.io.*;
 import java.net.*;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.NoSuchElementException;
 
 public class Client {
@@ -12,7 +13,8 @@ public class Client {
     private static final int SERVER_PORT_NUM = 9090;
     private static final String USERNAME = "jdoe";
     private static final String PASSWORD = "password123";
-
+    private static final String ROOT_DIRECTORY = "/DC_Upload/";
+    // TODO: Wrap in optional
     private String sessionId;
 
     public static void main(String[] args) {
@@ -33,6 +35,9 @@ public class Client {
         if (isLoggedIn()) {
             DatagramSocket socket = new DatagramSocket();
             SocketHelper socketHelper = new SocketHelper(socket);
+            FileSystem fs = new FileSystemImpl(ROOT_DIRECTORY);
+            String filename = "user_upload_01.txt";
+            String fileContents = Base64.getEncoder().encodeToString(fs.readFile(filename));
 
             socketHelper.send(new DatagramMessage(new Message(
                     Request.UPLOAD,
@@ -40,10 +45,9 @@ public class Client {
                     Arrays.asList(
                         new KeyValue("username", USERNAME),
                         new KeyValue("session_id", sessionId),
-                        new KeyValue("filename", "example3.txt")
+                        new KeyValue("filename", filename)
                     ),
-                    // "Hello World" base64 encoded
-                    "SGVsbG8gV29ybGQh"
+                    fileContents
             ).toJson(), "localhost", SERVER_PORT_NUM));
 
             Message serverResponse = Message.fromJson(socketHelper.receive().getMessage());
