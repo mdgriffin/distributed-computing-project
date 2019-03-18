@@ -5,5 +5,4 @@ public enum Response {
     ERROR,
     DENIED,
     NOT_FOUND;
-
 }

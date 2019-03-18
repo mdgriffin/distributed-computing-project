@@ -1,6 +1,5 @@
 package com.mdgriffin.distributedcomputingproject.common;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

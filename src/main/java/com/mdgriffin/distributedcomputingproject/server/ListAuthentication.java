@@ -1,7 +1,6 @@
 package com.mdgriffin.distributedcomputingproject.server;
 
 import javax.security.auth.login.AccountNotFoundException;
-import java.nio.file.AccessDeniedException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +16,6 @@ public class ListAuthentication implements  Authentication {
 
         sessions = new HashMap<>();
     }
-
 
     public boolean isValidUser (String username, String password) {
         String foundPassword = validUsers.get(username);
