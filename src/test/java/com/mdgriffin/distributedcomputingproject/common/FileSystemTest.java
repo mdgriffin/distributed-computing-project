@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class FileSystemTest {
 
-    private static final String TEST_PATH = "/DC_Test/";
+    private static final String TEST_PATH = "/DC_Temp/DC_Test/";
 
     private static FileSystem fs = new FileSystemImpl(TEST_PATH);
 
@@ -133,4 +133,10 @@ public class FileSystemTest {
         assertEquals(false, result);
     }
 
+
+    @Test
+    public void whenListingFiles_AndDirectoryDoesNotExist_emptyList () {
+        List<String> directoryListing = fs.listDirectory("does_not_exist");
+        assertEquals(0, directoryListing.size());
+    }
 }

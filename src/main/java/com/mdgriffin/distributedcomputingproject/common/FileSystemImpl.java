@@ -61,12 +61,15 @@ public class FileSystemImpl implements FileSystem {
     @Override
     public List<String> listDirectory (String path, boolean includeDirectories) {
         List<String> fileNames = new ArrayList<String>();
-        File directory = new File(basePath + path);
-        File[] fileList = directory.listFiles();
 
-        for (File file: fileList) {
-            if (includeDirectories || file.isFile()) {
-                fileNames.add(file.getName());
+        if (directoryExists(path)) {
+            File directory = new File(basePath + path);
+            File[] fileList = directory.listFiles();
+
+            for (File file: fileList) {
+                if (includeDirectories || file.isFile()) {
+                    fileNames.add(file.getName());
+                }
             }
         }
 
