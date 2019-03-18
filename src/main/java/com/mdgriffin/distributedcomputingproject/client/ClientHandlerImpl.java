@@ -29,7 +29,7 @@ public class ClientHandlerImpl implements ClientHandler {
     }
 
     @Override
-    public void download (String filename, String newFileName, String destinationPath) throws IOException {
+    public void download (String destinationPath, String filename, String newFileName) throws IOException {
         if (isLoggedIn()) {
             FileSystem fs = new FileSystemImpl(destinationPath);
 
