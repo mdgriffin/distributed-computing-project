@@ -3,11 +3,9 @@ package com.mdgriffin.distributedcomputingproject.server;
 import com.mdgriffin.distributedcomputingproject.common.*;
 
 import javax.security.auth.login.AccountNotFoundException;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
@@ -95,8 +93,14 @@ public class RequestHandlerImpl implements RequestHandler {
                 throw new InvalidParameterException();
             }
 
-            FileSystem fs = new FileSystemImpl(ROOT_DIRECTORY + username + "/");
-            fs.saveFile(filename, Base64.getDecoder().decode(message.getBody()));
+            FileSystem fs = new FileSystemImpl(ROOT_DIRECTORY);
+
+            if (!fs.directoryExists(username)) {
+                fs.createDirectory(username);
+            }
+
+
+            fs.saveFile(username + "/" + filename, Base64.getDecoder().decode(message.getBody()));
 
             return new Message(
                     message.getRequest(),
@@ -140,7 +144,7 @@ public class RequestHandlerImpl implements RequestHandler {
             // Encode Base64
             String fileContents = Base64.getEncoder().encodeToString(fs.readFile(filename));
 
-            new Message(
+            return new Message(
                     message.getRequest(),
                     Response.SUCCESS,
                     Arrays.asList(
@@ -152,6 +156,7 @@ public class RequestHandlerImpl implements RequestHandler {
             // TODO: Add builder to simplify message creation
             return new Message(
                 message.getRequest(),
+                // TODO: Change to DENIED
                 Response.ERROR,
                 Arrays.asList(new KeyValue("message", "Must supply valid username and session ID")),
                 ""
@@ -171,8 +176,6 @@ public class RequestHandlerImpl implements RequestHandler {
                     ""
             );
         }
-
-        return null;
     }
 
 }
