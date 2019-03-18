@@ -12,6 +12,7 @@ public class Server {
     private DatagramSocket datagramSocket;
     private SocketHelper socketHelper;
     private RequestHandler requestHandler;
+    private boolean isListening = false;
 
     public static void main(String[] args) {
         try {
@@ -30,52 +31,50 @@ public class Server {
     }
 
     public void listen () {
-        // TODO: What if listen was called multiple times, add boolean to indicate isListening
-        try {
-            while (true) {
-                DatagramMessage receivedMessage = socketHelper.receive();
-                Message message = Message.fromJson(receivedMessage.getMessage());
+        if (!isListening) {
+            isListening = true;
+            try {
+                while (true) {
+                    DatagramMessage receivedMessage = socketHelper.receive();
+                    Message message = Message.fromJson(receivedMessage.getMessage());
 
-                switch (message.getRequest()) {
-                    case LOGIN:
-                        handleLogin(receivedMessage, message);
-                        break;
-                    case LIST:
-                        handleList(receivedMessage, message);
-                        break;
-                    case UPLOAD:
-                        handleUpload(receivedMessage, message);
-                        break;
-                    case DOWNLOAD:
-                        handleDownload(receivedMessage,  message);
-                        break;
-                    default:
-                        break;
+                    switch (message.getRequest()) {
+                        case LOGIN:
+                            handleLogin(receivedMessage, message);
+                            break;
+                        case LIST:
+                            handleList(receivedMessage, message);
+                            break;
+                        case UPLOAD:
+                            handleUpload(receivedMessage, message);
+                            break;
+                        case DOWNLOAD:
+                            handleDownload(receivedMessage, message);
+                            break;
+                        default:
+                            break;
+                    }
                 }
+            } catch (Exception exc) {
+                System.out.println(exc);
             }
-        } catch (Exception exc) {
-            System.out.println(exc);
         }
     }
 
     private void handleDownload (DatagramMessage datagramMessage, Message message) throws IOException {
-        Message result = requestHandler.download(message);
-        socketHelper.send(new DatagramMessage(result.toJson(), datagramMessage.getAddress(), datagramMessage.getPortNum()));
+        socketHelper.send(new DatagramMessage(requestHandler.download(message).toJson(), datagramMessage.getAddress(), datagramMessage.getPortNum()));
     }
 
     private void handleUpload (DatagramMessage datagramMessage, Message message) throws IOException {
-        Message result = requestHandler.upload(message);
-        socketHelper.send(new DatagramMessage(result.toJson(), datagramMessage.getAddress(), datagramMessage.getPortNum()));
+        socketHelper.send(new DatagramMessage(requestHandler.upload(message).toJson(), datagramMessage.getAddress(), datagramMessage.getPortNum()));
     }
 
     private void handleList (DatagramMessage datagramMessage, Message message) throws IOException {
-        Message result = requestHandler.list(message);
-        socketHelper.send(new DatagramMessage(result.toJson(), datagramMessage.getAddress(), datagramMessage.getPortNum()));
+        socketHelper.send(new DatagramMessage(requestHandler.list(message).toJson(), datagramMessage.getAddress(), datagramMessage.getPortNum()));
     }
 
     private void handleLogin (DatagramMessage datagramMessage, Message message) throws IOException {
-        Message result = requestHandler.login(message);
-        socketHelper.send(new DatagramMessage(result.toJson(), datagramMessage.getAddress(), datagramMessage.getPortNum()));
+        socketHelper.send(new DatagramMessage(requestHandler.login(message).toJson(), datagramMessage.getAddress(), datagramMessage.getPortNum()));
     }
 
 }
