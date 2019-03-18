@@ -13,7 +13,8 @@ public class Client {
     private static final int SERVER_PORT_NUM = 9090;
     private static final String USERNAME = "jdoe";
     private static final String PASSWORD = "password123";
-    private static final String ROOT_DIRECTORY = "/DC_Upload/";
+    private static final String ROOT_DIRECTORY = "/DC_Temp/DC_Client/";
+
     // TODO: Wrap in optional
     private String sessionId;
 
@@ -26,8 +27,39 @@ public class Client {
             login();
             listFiles();
             upload();
+            download();
         } catch (IOException exc) {
             System.out.println(exc);
+        }
+    }
+
+    private void download () throws IOException {
+        if (isLoggedIn()) {
+            DatagramSocket socket = new DatagramSocket();
+            SocketHelper socketHelper = new SocketHelper(socket);
+            FileSystem fs = new FileSystemImpl(ROOT_DIRECTORY);
+            String filename = "user_upload_01.txt";
+            String savedFiledName = "user_download_01.txt";
+
+            socketHelper.send(new DatagramMessage(new Message(
+                    Request.DOWNLOAD,
+                    null,
+                    Arrays.asList(
+                            new KeyValue("username", USERNAME),
+                            new KeyValue("session_id", sessionId),
+                            new KeyValue("filename", filename)
+                    ),
+                    null
+            ).toJson(), "localhost", SERVER_PORT_NUM));
+
+            Message serverResponse = Message.fromJson(socketHelper.receive().getMessage());
+            // decode file contents
+            byte[] fileContents = Base64.getDecoder().decode(serverResponse.getBody().getBytes());
+            fs.saveFile(savedFiledName, fileContents);
+
+            System.out.println("Successfully downloaded file");
+        } else {
+            System.out.println("Must be logged in to download files");
         }
     }
 
@@ -58,6 +90,8 @@ public class Client {
             } else {
                 System.out.println("Upload Response: " + serverResponse.getResponse());
             }
+        } else {
+            System.out.println("Must be logged in to upload files");
         }
     }
 
@@ -85,6 +119,8 @@ public class Client {
             } else {
                 System.out.println("Login Response: " + serverResponse.getResponse());
             }
+        } else {
+            System.out.println("Must be logged in to list files");
         }
     }
 

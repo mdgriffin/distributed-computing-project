@@ -46,6 +46,9 @@ public class Server {
                     case UPLOAD:
                         handleUpload(receivedMessage, message);
                         break;
+                    case DOWNLOAD:
+                        handleDownload(receivedMessage,  message);
+                        break;
                     default:
                         break;
                 }
@@ -53,6 +56,11 @@ public class Server {
         } catch (Exception exc) {
             System.out.println(exc);
         }
+    }
+
+    private void handleDownload (DatagramMessage datagramMessage, Message message) throws IOException {
+        Message result = requestHandler.download(message);
+        socketHelper.send(new DatagramMessage(result.toJson(), datagramMessage.getAddress(), datagramMessage.getPortNum()));
     }
 
     private void handleUpload (DatagramMessage datagramMessage, Message message) throws IOException {

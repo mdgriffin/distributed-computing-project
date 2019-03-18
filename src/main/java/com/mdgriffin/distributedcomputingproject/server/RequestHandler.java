@@ -10,4 +10,6 @@ public interface RequestHandler {
 
     Message upload (Message message);
 
+    Message download (Message message);
+
 }

@@ -3,8 +3,11 @@ package com.mdgriffin.distributedcomputingproject.server;
 import com.mdgriffin.distributedcomputingproject.common.*;
 
 import javax.security.auth.login.AccountNotFoundException;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
@@ -12,7 +15,7 @@ import java.util.List;
 public class RequestHandlerImpl implements RequestHandler {
 
     private Authentication authentication;
-    private static final String ROOT_DIRECTORY = "/DC_TEST/";
+    private static final String ROOT_DIRECTORY = "/DC_Temp/DC_Server/";
 
     public RequestHandlerImpl () {
         authentication = new ListAuthentication();
@@ -29,8 +32,8 @@ public class RequestHandlerImpl implements RequestHandler {
                     message.getRequest(),
                     Response.SUCCESS,
                     Arrays.asList(
-                            new KeyValue("message", "You have successfully logged in"),
-                            new KeyValue("session_id", session.getId())
+                        new KeyValue("message", "You have successfully logged in"),
+                        new KeyValue("session_id", session.getId())
                     ),
                     ""
             );
@@ -62,6 +65,7 @@ public class RequestHandlerImpl implements RequestHandler {
             }
 
             FileSystem fs = new FileSystemImpl(ROOT_DIRECTORY + username);
+
             List<String> userFiles = fs.listDirectory("");
 
             return new Message(
@@ -115,6 +119,60 @@ public class RequestHandlerImpl implements RequestHandler {
                     ""
             );
         }
+    }
+
+    @Override
+    public Message download(Message message) {
+        try {
+            String username = message.getHeaders().stream().filter(name -> name.getKey().equals("username")).findFirst().orElseThrow(() -> new InvalidParameterException()).getValue();
+            String sessionId = message.getHeaders().stream().filter(name -> name.getKey().equals("session_id")).findFirst().orElseThrow(() -> new InvalidParameterException()).getValue();
+            String filename = message.getHeaders().stream().filter(name -> name.getKey().equals("filename")).findFirst().orElseThrow(() -> new InvalidParameterException()).getValue();
+            FileSystem fs = new FileSystemImpl(ROOT_DIRECTORY + username + "/");
+
+            if (!authentication.hasActiveSession(username, sessionId)) {
+                throw new InvalidParameterException();
+            }
+
+            if (!fs.fileExists(filename)) {
+                throw new FileNotFoundException();
+            }
+
+            // Encode Base64
+            String fileContents = Base64.getEncoder().encodeToString(fs.readFile(filename));
+
+            new Message(
+                    message.getRequest(),
+                    Response.SUCCESS,
+                    Arrays.asList(
+                        new KeyValue("filename", filename)
+                    ),
+                    fileContents
+            );
+        } catch (InvalidParameterException exc) {
+            // TODO: Add builder to simplify message creation
+            return new Message(
+                message.getRequest(),
+                Response.ERROR,
+                Arrays.asList(new KeyValue("message", "Must supply valid username and session ID")),
+                ""
+            );
+        } catch (FileNotFoundException exc) {
+            return new Message(
+                    message.getRequest(),
+                    Response.ERROR,
+                    Arrays.asList(new KeyValue("message", "File Not Found!")),
+                    ""
+            );
+        } catch (IOException exc) {
+            return new Message(
+                    message.getRequest(),
+                    Response.ERROR,
+                    Arrays.asList(new KeyValue("message", "Error Retrieving File")),
+                    ""
+            );
+        }
+
+        return null;
     }
 
 }
