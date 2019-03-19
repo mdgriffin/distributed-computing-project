@@ -72,10 +72,10 @@ public class FileSystemTest {
 
     @Test
     public void canRetrieveDirectoryContents () {
-        List<String> directoryListing = fs.listDirectory("");
+        List<FileDescription> directoryListing = fs.listDirectory("");
 
         assertEquals(3, directoryListing.size());
-        assertEquals(true, directoryListing.contains("test1.txt"));
+        assertEquals(true, directoryListing.contains(new FileDescription("test1.txt", 0)));
     }
 
     @Test
@@ -83,21 +83,23 @@ public class FileSystemTest {
         String testDir1 = "temp_testing1";
         String testDir2 = "temp_testing2";
 
-        List<String> directoryListingBefore = fs.listDirectory("", true);
+        List<FileDescription> directoryListingBefore = fs.listDirectory("", true);
 
         fs.createDirectory(testDir1);
         fs.createDirectory(testDir2);
 
-        List<String> directoryListingAfter = fs.listDirectory("", true);
+        List<FileDescription> directoryListingAfter = fs.listDirectory("", true);
+
+        System.out.println();
 
         assertEquals(directoryListingBefore.size() + 2, directoryListingAfter.size());
-        assertTrue(directoryListingAfter.contains(testDir1));
-        assertTrue(directoryListingAfter.contains(testDir2));
+        assertTrue(directoryListingAfter.contains(new FileDescription(testDir1,0)));
+        assertTrue(directoryListingAfter.contains(new FileDescription(testDir2, 0)));
 
         fs.deleteDirectory(testDir1);
         fs.deleteDirectory(testDir2);
 
-        List<String> directoryListingAfterDelete = fs.listDirectory("", true);
+        List<FileDescription> directoryListingAfterDelete = fs.listDirectory("", true);
 
         assertEquals(directoryListingBefore.size(), directoryListingAfterDelete.size());
     }
@@ -136,7 +138,7 @@ public class FileSystemTest {
 
     @Test
     public void whenListingFiles_AndDirectoryDoesNotExist_emptyList () {
-        List<String> directoryListing = fs.listDirectory("does_not_exist");
+        List<FileDescription> directoryListing = fs.listDirectory("does_not_exist");
         assertEquals(0, directoryListing.size());
     }
 }

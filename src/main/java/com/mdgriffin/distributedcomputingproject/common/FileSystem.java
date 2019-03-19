@@ -14,9 +14,9 @@ public interface FileSystem {
 
     boolean deleteDirectory (String path);
 
-    List<String> listDirectory (String path);
+    List<FileDescription> listDirectory (String path);
 
-    List<String> listDirectory (String path, boolean includeDirectories);
+    List<FileDescription> listDirectory (String path, boolean includeDirectories);
 
     boolean directoryExists (String path);
 

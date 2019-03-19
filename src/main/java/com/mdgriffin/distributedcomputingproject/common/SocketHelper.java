@@ -7,6 +7,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.Arrays;
 
+// TODO: Make Observable
 public class SocketHelper {
 
     private DatagramSocket socket;

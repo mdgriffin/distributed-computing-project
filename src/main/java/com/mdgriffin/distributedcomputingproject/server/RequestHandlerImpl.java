@@ -64,13 +64,13 @@ public class RequestHandlerImpl implements RequestHandler {
 
             FileSystem fs = new FileSystemImpl(ROOT_DIRECTORY + username);
 
-            List<String> userFiles = fs.listDirectory("");
+            List<FileDescription> userFiles = fs.listDirectory("");
 
             return new Message(
                     message.getRequest(),
                     Response.SUCCESS,
                     null,
-                    userFiles.toString()
+                   fileListToCSV(userFiles)
             );
         } catch (InvalidParameterException exc) {
             return new Message(
@@ -80,6 +80,10 @@ public class RequestHandlerImpl implements RequestHandler {
                     ""
             );
         }
+    }
+
+    private static String fileListToCSV (List<FileDescription> filelist) {
+        return filelist.toString().replace(", ", "").replace("[", "").replace("]", "");
     }
 
     @Override

@@ -54,13 +54,13 @@ public class FileSystemImpl implements FileSystem {
     }
 
     @Override
-    public List<String> listDirectory (String path) {
+    public List<FileDescription> listDirectory (String path) {
         return listDirectory(path, false);
     }
 
     @Override
-    public List<String> listDirectory (String path, boolean includeDirectories) {
-        List<String> fileNames = new ArrayList<String>();
+    public List<FileDescription> listDirectory (String path, boolean includeDirectories) {
+        List<FileDescription> fileDescriptions = new ArrayList<FileDescription>();
 
         if (directoryExists(path)) {
             File directory = new File(basePath + path);
@@ -68,12 +68,12 @@ public class FileSystemImpl implements FileSystem {
 
             for (File file: fileList) {
                 if (includeDirectories || file.isFile()) {
-                    fileNames.add(file.getName());
+                    fileDescriptions.add(new FileDescription(file.getName(), file.length()));
                 }
             }
         }
 
-        return fileNames;
+        return fileDescriptions;
     }
 
     @Override
