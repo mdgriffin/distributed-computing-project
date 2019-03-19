@@ -53,7 +53,7 @@ public class ClientHandlerImpl implements ClientHandler {
 
                 System.out.println("Successfully downloaded file");
             } else {
-                String message = serverResponse.getHeaders().stream().filter(name -> name.getKey().equals("message")).findFirst().orElseThrow(() -> new NoSuchElementException()).getValue();
+                String message = serverResponse.getHeaderValue("message");
                 System.out.println("Download Failed: " + message);
             }
         } else {
@@ -84,7 +84,7 @@ public class ClientHandlerImpl implements ClientHandler {
             ).toJson(), hostname, portnum));
 
             Message serverResponse = Message.fromJson(socketHelper.receive().getMessage());
-            String message = serverResponse.getHeaders().stream().filter(name -> name.getKey().equals("message")).findFirst().orElseThrow(() -> new NoSuchElementException()).getValue();
+            String message = serverResponse.getHeaderValue("message");
 
             if (serverResponse.getResponse().equals(Response.SUCCESS)) {
                 System.out.println("Got Response from Server: " + message);
@@ -137,7 +137,7 @@ public class ClientHandlerImpl implements ClientHandler {
 
         try {
             if (serverResponse.getResponse().equals(Response.SUCCESS)) {
-                sessionId = serverResponse.getHeaders().stream().filter(name -> name.getKey().equals("session_id")).findFirst().orElseThrow(() -> new NoSuchElementException()).getValue();
+                sessionId = serverResponse.getHeaderValue("session_id");
 
                 System.out.println("Successfully Logged In with session_id of " + sessionId);
             } else {

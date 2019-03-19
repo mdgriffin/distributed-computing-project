@@ -4,9 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.security.InvalidParameterException;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class MessageTest {
@@ -38,5 +40,30 @@ public class MessageTest {
         } catch (IOException exc) {
             fail(exc.getMessage());
         }
+    }
+
+    @Test
+    public void whenGettingHeaderValue_withValidKey_valueReturned () {
+        Message message = new Message(
+            Request.DOWNLOAD,
+            null,
+            Arrays.asList(new KeyValue("test1", "Example 1"), new KeyValue("test2", "Example 1")),
+            ""
+        );
+
+        String value = message.getHeaderValue("test1");
+        assertEquals("Example 1", value);
+    }
+
+    @Test()
+    public void whenGettingHeaderValue_withMissingKey_exceptionThrown () {
+        Message message = new Message(
+                Request.DOWNLOAD,
+                null,
+                Arrays.asList(new KeyValue("test1", "Example 1"), new KeyValue("test2", "Example 1")),
+                ""
+        );
+
+        assertThrows(InvalidParameterException.class, () -> message.getHeaderValue("test3"));
     }
 }

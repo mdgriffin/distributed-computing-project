@@ -22,8 +22,8 @@ public class RequestHandlerImpl implements RequestHandler {
     @Override
     public Message login(Message message) {
         try {
-            String username = message.getHeaders().stream().filter(name -> name.getKey().equals("username")).findFirst().orElseThrow(() -> new InvalidParameterException()).getValue();
-            String password = message.getHeaders().stream().filter(name -> name.getKey().equals("password")).findFirst().orElseThrow(() -> new InvalidParameterException()).getValue();
+            String username = message.getHeaderValue("username");
+            String password = message.getHeaderValue("password");
             Session session  = authentication.login(username, password);
 
             return new Message(
@@ -55,8 +55,8 @@ public class RequestHandlerImpl implements RequestHandler {
     @Override
     public Message list(Message message) {
         try {
-            String username = message.getHeaders().stream().filter(name -> name.getKey().equals("username")).findFirst().orElseThrow(() -> new InvalidParameterException()).getValue();
-            String sessionId = message.getHeaders().stream().filter(name -> name.getKey().equals("session_id")).findFirst().orElseThrow(() -> new InvalidParameterException()).getValue();
+            String username = message.getHeaderValue("username");
+            String sessionId = message.getHeaderValue("session_id");
 
             if (!authentication.hasActiveSession(username, sessionId)) {
                 throw new InvalidParameterException();
@@ -85,20 +85,18 @@ public class RequestHandlerImpl implements RequestHandler {
     @Override
     public Message upload (Message message) {
         try {
-            String username = message.getHeaders().stream().filter(name -> name.getKey().equals("username")).findFirst().orElseThrow(() -> new InvalidParameterException()).getValue();
-            String sessionId = message.getHeaders().stream().filter(name -> name.getKey().equals("session_id")).findFirst().orElseThrow(() -> new InvalidParameterException()).getValue();
-            String filename = message.getHeaders().stream().filter(name -> name.getKey().equals("filename")).findFirst().orElseThrow(() -> new InvalidParameterException()).getValue();
+            String username = message.getHeaderValue("username");
+            String sessionId = message.getHeaderValue("session_id");
+            String filename = message.getHeaderValue("filename");
+            FileSystem fs = new FileSystemImpl(ROOT_DIRECTORY);
 
             if (!authentication.hasActiveSession(username, sessionId)) {
                 throw new InvalidParameterException();
             }
 
-            FileSystem fs = new FileSystemImpl(ROOT_DIRECTORY);
-
             if (!fs.directoryExists(username)) {
                 fs.createDirectory(username);
             }
-
 
             fs.saveFile(username + "/" + filename, Base64.getDecoder().decode(message.getBody()));
 
@@ -128,9 +126,9 @@ public class RequestHandlerImpl implements RequestHandler {
     @Override
     public Message download(Message message) {
         try {
-            String username = message.getHeaders().stream().filter(name -> name.getKey().equals("username")).findFirst().orElseThrow(() -> new InvalidParameterException()).getValue();
-            String sessionId = message.getHeaders().stream().filter(name -> name.getKey().equals("session_id")).findFirst().orElseThrow(() -> new InvalidParameterException()).getValue();
-            String filename = message.getHeaders().stream().filter(name -> name.getKey().equals("filename")).findFirst().orElseThrow(() -> new InvalidParameterException()).getValue();
+            String username = message.getHeaderValue("username");
+            String sessionId = message.getHeaderValue("session_id");
+            String filename = message.getHeaderValue("filename");
             FileSystem fs = new FileSystemImpl(ROOT_DIRECTORY + username + "/");
 
             if (!authentication.hasActiveSession(username, sessionId)) {

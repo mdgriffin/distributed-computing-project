@@ -5,9 +5,10 @@
 - [x] Create Server
 - [x] Create Client
 - [x] Basic Working Client-Server communication
-- [ ] Login Functionality
+- [X] Login Functionality
     - [X] Sessions
         - [X] Session Expiry
+- [ ] Logoff
 - [X] Saving File
     - [X] Session Validation
     - [X] Base64 Encode
