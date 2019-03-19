@@ -28,4 +28,5 @@
 - [ ] Presentation
     - [ ] Decide on type of application
         - [ ] Swing
-        - [ ] Spring 
+        - [ ] Spring
+    - [ ] Make client handler observable
