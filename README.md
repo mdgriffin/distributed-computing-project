@@ -26,9 +26,9 @@
     - [X] Getting files from user directory
     - [X] Sending list to client
 - [ ] Presentation
-    - [ ] Decide on type of application
-        - [ ] Swing
-        - [ ] Spring
+    - [ ] Login View
+    - [ ] List Files View
+    - [ ] Open File Picker
     - [ ] Make client handler observable
     
     

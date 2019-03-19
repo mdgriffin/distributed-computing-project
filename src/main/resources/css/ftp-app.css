@@ -3,3 +3,7 @@
     -fx-text-fill: #fff;
     -fx-font: NORMAL 30 Tahoma;
 }
+
+.subheading {
+    -fx-font: NORMAL 20 Tahoma;
+}
