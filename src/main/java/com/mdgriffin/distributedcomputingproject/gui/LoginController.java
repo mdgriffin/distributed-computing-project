@@ -5,6 +5,7 @@ import com.mdgriffin.distributedcomputingproject.common.Message;
 import com.mdgriffin.distributedcomputingproject.common.Response;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
@@ -37,11 +38,15 @@ public class LoginController {
 
                 if (loginMessage.getResponse().equals(Response.SUCCESS)) {
                     clientHandler.setSessionId(loginMessage.getHeaderValue("session_id"));
+
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Logged In Successfully");
+                    alert.showAndWait();
+
                     if (context != null) {
                         context.changeToFileManager();
                     }
                 } else if (loginMessage.getResponse().equals(Response.DENIED)) {
-                    lblLoginError.setText("Error Logging In");
+                    lblLoginError.setText("Incorrect username or password");
                 } else {
                     lblLoginError.setText("Error Logging In");
                 }
