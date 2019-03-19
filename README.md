@@ -30,3 +30,10 @@
         - [ ] Swing
         - [ ] Spring
     - [ ] Make client handler observable
+    
+    
+## Nice Additions
+
+- List file size along with filename
+    - Will require creating a new class to hold filename and filesize
+    - The data string could be JSON storing this data

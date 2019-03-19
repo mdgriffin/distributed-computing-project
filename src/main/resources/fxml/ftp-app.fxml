@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+
+<GridPane fx:controller="com.mdgriffin.distributedcomputingproject.gui.FTPController"
+          xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
+
+    <Label GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2" styleClass="mainheading">FTP Express</Label>
+
+    <Label fx:id="lblUsername" GridPane.columnIndex="0" GridPane.rowIndex="1" text="Username:"/>
+    <TextField GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+    <Label fx:id="lblPassword" GridPane.columnIndex="0" GridPane.rowIndex="2" text="Password:"/>
+    <TextField GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+    <Button fx:id="btnLogin" text="Login" onAction="#onBtnLoginClick" GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="2" />
+
+    <TableView fx:id="tblFileList" GridPane.columnIndex="0" GridPane.rowIndex="4" GridPane.columnSpan="2" maxHeight="200">
+        <columns>
+            <TableColumn text="Filename">
+                <cellValueFactory><PropertyValueFactory property="filename" />
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Filesize">
+                <cellValueFactory><PropertyValueFactory property="filesize" />
+                </cellValueFactory>
+            </TableColumn>
+        </columns>
+    </TableView>
+</GridPane>

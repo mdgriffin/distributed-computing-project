@@ -1,5 +1,5 @@
-.lbl {
+.mainheading {
     -fx-background-color: #ff0000;
     -fx-text-fill: #fff;
-    -fx-font-size: 60px;
+    -fx-font: NORMAL 30 Tahoma;
 }
