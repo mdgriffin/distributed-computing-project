@@ -11,16 +11,16 @@ import java.util.NoSuchElementException;
 
 public class ClientHandlerImpl implements ClientHandler {
 
-    private String username;
-    private String password;
+    //private String username;
+    //private String password;
     private String hostname;
     private int portnum;
     private String sessionId;
     private SocketHelper socketHelper;
 
-    public ClientHandlerImpl(String username, String password, String hostname, int portNum) throws SocketException {
-        this.username = username;
-        this.password = password;
+    public ClientHandlerImpl(String hostname, int portNum) throws SocketException {
+        //this.username = username;
+        //this.password = password;
         this.hostname = hostname;
         this.portnum = portNum;
 
@@ -37,7 +37,8 @@ public class ClientHandlerImpl implements ClientHandler {
                     Request.DOWNLOAD,
                     null,
                     Arrays.asList(
-                            new KeyValue("username", username),
+                            // TODO: Retrieve username server side using session key
+                            //new KeyValue("username", username),
                             new KeyValue("session_id", sessionId),
                             new KeyValue("filename", filename)
                     ),
@@ -76,7 +77,7 @@ public class ClientHandlerImpl implements ClientHandler {
                     Request.UPLOAD,
                     null,
                     Arrays.asList(
-                            new KeyValue("username", username),
+                            //new KeyValue("username", username),
                             new KeyValue("session_id", sessionId),
                             new KeyValue("filename", filename)
                     ),
@@ -103,7 +104,7 @@ public class ClientHandlerImpl implements ClientHandler {
                     Request.LIST,
                     null,
                     Arrays.asList(
-                            new KeyValue("username", username),
+                            //new KeyValue("username", username),
                             new KeyValue("session_id", sessionId)
                     ),
                     ""
@@ -122,7 +123,12 @@ public class ClientHandlerImpl implements ClientHandler {
     }
 
     @Override
-    public void login () throws IOException {
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    @Override
+    public Message login (String username, String password) throws IOException {
         socketHelper.send(new DatagramMessage(new Message(
                 Request.LOGIN,
                 null,
@@ -133,19 +139,7 @@ public class ClientHandlerImpl implements ClientHandler {
                 ""
         ).toJson(), hostname, portnum));
 
-        Message serverResponse = Message.fromJson(socketHelper.receive().getMessage());
-
-        try {
-            if (serverResponse.getResponse().equals(Response.SUCCESS)) {
-                sessionId = serverResponse.getHeaderValue("session_id");
-
-                System.out.println("Successfully Logged In with session_id of " + sessionId);
-            } else {
-                System.out.println("Failed to Login");
-            }
-        } catch (NoSuchElementException exc) {
-            System.out.println("No session id returned from server");
-        }
+        return Message.fromJson(socketHelper.receive().getMessage());
     }
 
     @Override

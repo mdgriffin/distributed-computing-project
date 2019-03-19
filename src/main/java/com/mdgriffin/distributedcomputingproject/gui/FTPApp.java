@@ -1,22 +1,36 @@
 package com.mdgriffin.distributedcomputingproject.gui;
 
+import com.mdgriffin.distributedcomputingproject.client.ClientHandler;
+import com.mdgriffin.distributedcomputingproject.client.ClientHandlerImpl;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+
 public class FTPApp extends Application {
 
     private Scene loginScene;
     private Scene fileManagerScene;
     private Stage stage;
+    private ClientHandler clientHandler;
+    private static final int SERVER_PORT_NUM = 9090;
+    private static final String SERVER_HOSTNAME = "localhost";
+
+    public FTPApp () {
+        try {
+            clientHandler = new ClientHandlerImpl(SERVER_HOSTNAME, SERVER_PORT_NUM);
+        } catch (IOException exc) {
+            System.out.println(exc.getMessage());
+            System.exit(0);
+        }
+    }
 
     public static void main(String[] args) {
         launch(args);
     }
-
-    // TODO: https://stackoverflow.com/questions/12804664/how-to-swap-screens-in-a-javafx-application-in-the-controller-class
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -51,6 +65,10 @@ public class FTPApp extends Application {
         if (stage != null && fileManagerScene != null) {
             stage.setScene(fileManagerScene);
         }
+    }
+
+    public ClientHandler getClientHandler () {
+        return this.clientHandler;
     }
 
 }

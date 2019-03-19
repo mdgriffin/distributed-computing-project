@@ -7,3 +7,7 @@
 .subheading {
     -fx-font: NORMAL 20 Tahoma;
 }
+
+.error {
+    -fx-text-fill: red;
+}

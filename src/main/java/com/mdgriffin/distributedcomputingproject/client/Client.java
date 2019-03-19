@@ -14,7 +14,7 @@ public class Client {
 
     public static void main(String[] args) {
         try {
-            Client client = new Client(new ClientHandlerImpl(USERNAME, PASSWORD, SERVER_HOSTNAME, SERVER_PORT_NUM));
+            Client client = new Client(new ClientHandlerImpl(SERVER_HOSTNAME, SERVER_PORT_NUM));
             client.start();
         } catch (IOException exc) {
             System.out.println("Issue connecting to client: " + exc.getMessage());
@@ -26,14 +26,16 @@ public class Client {
     }
 
     public void start() {
+        /*
         try {
-            clientHandler.login();
+            clientHandler.login(USERNAME, PASSWORD);
             clientHandler.list();
             clientHandler.upload(ROOT_DIRECTORY, "user_upload_01.txt");
             clientHandler.download( ROOT_DIRECTORY,"user_upload_01.txt", "user_download_02.txt");
         } catch (IOException exc) {
             System.out.println(exc.getMessage());
         }
+        */
     }
 
 }
