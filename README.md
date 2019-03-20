@@ -25,15 +25,15 @@
     - [X] Session Validation
     - [X] Getting files from user directory
     - [X] Sending list to client
+    - [X] List file size along with filename
 - [ ] Presentation
-    - [ ] Login View
-    - [ ] List Files View
+    - [ ] Open Connection
+    - [X] Login View
+    - [X] List Files View
     - [ ] Open File Picker
     - [ ] Make client handler observable
-    
-    
-## Nice Additions
 
-- List file size along with filename
-    - Will require creating a new class to hold filename and filesize
-    - The data string could be JSON storing this data
+## Bugs
+
+- [ ] Attempting to login when there is no connection crashes the application
+
