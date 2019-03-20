@@ -23,4 +23,6 @@
             </TableColumn>
         </columns>
     </TableView>
+
+    <Button GridPane.rowIndex="3" GridPane.columnIndex="0" GridPane.columnSpan="2" onAction="#onBtnUploadClick">Upload File</Button>
 </GridPane>

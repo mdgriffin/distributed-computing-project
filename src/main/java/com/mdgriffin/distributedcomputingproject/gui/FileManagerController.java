@@ -4,6 +4,7 @@ import com.mdgriffin.distributedcomputingproject.client.ClientHandler;
 import com.mdgriffin.distributedcomputingproject.common.FileDescription;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
 
@@ -39,6 +40,11 @@ public class FileManagerController {
     @FXML private void initialize() {
     }
     */
+
+    @FXML
+    public void onBtnUploadClick (ActionEvent event) {
+        System.out.println("On button click");
+    }
 
     public void loadFileList () {
         if (clientHandler != null) {
