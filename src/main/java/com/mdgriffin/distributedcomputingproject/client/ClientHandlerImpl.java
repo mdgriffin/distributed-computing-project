@@ -10,16 +10,12 @@ import java.util.*;
 
 public class ClientHandlerImpl implements ClientHandler {
 
-    //private String username;
-    //private String password;
     private String hostname;
     private int portnum;
     private String sessionId;
     private SocketHelper socketHelper;
 
     public ClientHandlerImpl(String hostname, int portNum) throws SocketException {
-        //this.username = username;
-        //this.password = password;
         this.hostname = hostname;
         this.portnum = portNum;
 
@@ -67,33 +63,35 @@ public class ClientHandlerImpl implements ClientHandler {
     }
 
     @Override
-    public void upload (String path, String filename) throws IOException {
-        if (isLoggedIn()) {
-            FileSystem fs = new FileSystemImpl(path);
-            String fileContents = Base64.getEncoder().encodeToString(fs.readFile(filename));
-
-            socketHelper.send(new DatagramMessage(new Message(
-                    Request.UPLOAD,
-                    null,
-                    Arrays.asList(
-                            //new KeyValue("username", username),
-                            new KeyValue("session_id", sessionId),
-                            new KeyValue("filename", filename)
-                    ),
-                    fileContents
-            ).toJson(), hostname, portnum));
-
-            Message serverResponse = Message.fromJson(socketHelper.receive().getMessage());
-            String message = serverResponse.getHeaderValue("message");
-
-            if (serverResponse.getResponse().equals(Response.SUCCESS)) {
-                System.out.println("Got Response from Server: " + message);
-            } else {
-                System.out.println("Upload Response: " + serverResponse.getResponse() + "\nError Message: " + message);
-            }
-        } else {
-            System.out.println("Must be logged in to upload files");
+    public boolean upload (String path, String filename) throws IOException {
+        if (!isLoggedIn()) {
+            throw new AccessDeniedException("Must be logged in to upload files");
         }
+
+        FileSystem fs = new FileSystemImpl("");
+        String fileContents = Base64.getEncoder().encodeToString(fs.readFile(path));
+
+        socketHelper.send(new DatagramMessage(new Message(
+            Request.UPLOAD,
+            null,
+            Arrays.asList(
+                new KeyValue("session_id", sessionId),
+                new KeyValue("filename", filename)
+            ),
+            fileContents
+        ).toJson(), hostname, portnum));
+
+        Message ServerMessage = Message.fromJson(socketHelper.receive().getMessage());
+        String message = ServerMessage.getHeaderValue("message");
+        Response serverResponse = ServerMessage.getResponse();
+
+        if (serverResponse.equals(Response.DENIED)) {
+            throw new AccessDeniedException(message);
+        } else if (!serverResponse.equals(Response.SUCCESS)) {
+            throw new IOException(message);
+        }
+
+        return true;
     }
 
     @Override
@@ -111,13 +109,16 @@ public class ClientHandlerImpl implements ClientHandler {
                 ""
         ).toJson(), hostname, portnum));
 
-        Message serverResponse = Message.fromJson(socketHelper.receive().getMessage());
+        Message serverMessage = Message.fromJson(socketHelper.receive().getMessage());
+        Response serverResponse = serverMessage.getResponse();
 
-        if (serverResponse.getResponse().equals(Response.SUCCESS)) {
-            return CSVUtil.csvToFileList(serverResponse.getBody());
-        } else {
+        if (serverResponse.equals(Response.DENIED)) {
+            throw new AccessDeniedException("Must be logged in to access server");
+        } else if (!serverResponse.equals(Response.SUCCESS)) {
             throw new IOException();
         }
+
+        return CSVUtil.csvToFileList(serverMessage.getBody());
     }
 
     @Override
@@ -137,7 +138,13 @@ public class ClientHandlerImpl implements ClientHandler {
                 ""
         ).toJson(), hostname, portnum));
 
-        return Message.fromJson(socketHelper.receive().getMessage());
+        Message serverMessage = Message.fromJson(socketHelper.receive().getMessage());
+
+        if (serverMessage.getResponse().equals(Response.SUCCESS)) {
+            setSessionId(serverMessage.getHeaderValue("session_id"));
+        }
+
+        return serverMessage;
     }
 
     @Override

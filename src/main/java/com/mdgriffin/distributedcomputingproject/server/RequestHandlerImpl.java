@@ -87,20 +87,23 @@ public class RequestHandlerImpl implements RequestHandler {
     @Override
     public Message upload (Message message) {
         try {
-            String username = message.getHeaderValue("username");
-            String sessionId = message.getHeaderValue("session_id");
+            //String username = message.getHeaderValue("username");
+            //String sessionId = message.getHeaderValue("session_id");
+            Session session = authentication.getActiveSession(message.getHeaderValue("session_id"));
             String filename = message.getHeaderValue("filename");
             FileSystem fs = new FileSystemImpl(ROOT_DIRECTORY);
 
+            /*
             if (!authentication.hasActiveSession(username, sessionId)) {
                 throw new InvalidParameterException();
             }
+            */
 
-            if (!fs.directoryExists(username)) {
-                fs.createDirectory(username);
+            if (!fs.directoryExists(session.getUsername())) {
+                fs.createDirectory(session.getUsername());
             }
 
-            fs.saveFile(username + "/" + filename, Base64.getDecoder().decode(message.getBody()));
+            fs.saveFile(session.getUsername() + "/" + filename, Base64.getDecoder().decode(message.getBody()));
 
             return new Message(
                     message.getRequest(),
@@ -111,7 +114,7 @@ public class RequestHandlerImpl implements RequestHandler {
         } catch (InvalidParameterException exc) {
             return new Message(
                     message.getRequest(),
-                    Response.ERROR,
+                    Response.DENIED,
                     Arrays.asList(new KeyValue("message", "Must supply valid username and session ID")),
                     ""
             );

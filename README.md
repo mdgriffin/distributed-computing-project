@@ -32,6 +32,7 @@
     - [X] List Files View
     - [ ] Open File Picker
     - [ ] Make client handler observable
+    - [ ] Download button on row in the file table
 
 ## Bugs
 

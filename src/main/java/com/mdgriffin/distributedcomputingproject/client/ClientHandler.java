@@ -11,7 +11,7 @@ public interface ClientHandler {
 
     Message login (String username, String password) throws IOException;
 
-    void upload(String path, String filename)  throws IOException;
+    boolean upload(String path, String filename)  throws IOException;
 
     void download(String destinationPath, String filename, String newFileName)  throws IOException;
 

@@ -76,4 +76,8 @@ public class FTPApp extends Application {
         return this.clientHandler;
     }
 
+    public Stage getStage () {
+        return stage;
+    }
+
 }
