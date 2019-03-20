@@ -6,9 +6,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.stage.FileChooser;
+import javafx.util.Callback;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,17 +28,16 @@ public class FileManagerController {
         this.clientHandler = context.getClientHandler();
     }
 
-    /*
     @FXML private void initialize() {
+        addButtonToTable();
     }
-    */
 
     @FXML
     public void onBtnUploadClick (ActionEvent event) {
         System.out.println("On button click");
 
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Resource File");
+        fileChooser.setTitle("Select File");
 
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Text Files", "*.txt"),
@@ -72,5 +71,62 @@ public class FileManagerController {
         } else {
             System.out.println("Client Handler Not Set!");
         }
+    }
+
+    /**
+     * Adapted from: https://riptutorial.com/javafx/example/27946/add-button-to-tableview
+     * Author: riptutorial.com
+     * Date: NA
+     * Date Accessed: 20/03/2019
+     */
+
+    private void addButtonToTable() {
+        TableColumn<FileDescription, Void> colBtn = new TableColumn("");
+
+        Callback<TableColumn<FileDescription, Void>, TableCell<FileDescription, Void>> cellFactory = new Callback<TableColumn<FileDescription, Void>, TableCell<FileDescription, Void>>() {
+            @Override
+            public TableCell<FileDescription, Void> call(final TableColumn<FileDescription, Void> param) {
+                final TableCell<FileDescription, Void> cell = new TableCell<FileDescription, Void>() {
+
+                    private final Button btn = new Button("Download");
+
+                    {
+                        btn.setOnAction((ActionEvent event) -> {
+                            FileDescription data = getTableView().getItems().get(getIndex());
+                            System.out.println("selectedData: " + data);
+                            // TODO: Implement Download
+                            // 1. Open file picker with destination to download
+                            // 2. Check that filename contains extension
+                            // Call download on client handler
+
+                            FileChooser fileChooser = new FileChooser();
+                            fileChooser.setTitle("Select File");
+
+                            File fileLocation = fileChooser.showSaveDialog(context.getStage());
+
+                            if (fileLocation != null) {
+                                System.out.println("Filename:" + fileLocation.getName());
+                                System.out.println("Location" + fileLocation.getPath());
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            setGraphic(btn);
+                        }
+                    }
+                };
+                return cell;
+            }
+        };
+
+        colBtn.setCellFactory(cellFactory);
+
+        tblFileList.getColumns().add(colBtn);
     }
 }
