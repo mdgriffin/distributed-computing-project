@@ -35,5 +35,5 @@
 
 ## Bugs
 
-- [ ] Attempting to login when there is no connection crashes the application
+- [ ] Attempting to login when there is no connection causes runnable to run infinitely 
 
