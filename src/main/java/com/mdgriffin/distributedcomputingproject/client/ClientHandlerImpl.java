@@ -5,9 +5,8 @@ import com.mdgriffin.distributedcomputingproject.common.*;
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.SocketException;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.NoSuchElementException;
+import java.nio.file.AccessDeniedException;
+import java.util.*;
 
 public class ClientHandlerImpl implements ClientHandler {
 
@@ -37,10 +36,10 @@ public class ClientHandlerImpl implements ClientHandler {
                     Request.DOWNLOAD,
                     null,
                     Arrays.asList(
-                            // TODO: Retrieve username server side using session key
-                            //new KeyValue("username", username),
-                            new KeyValue("session_id", sessionId),
-                            new KeyValue("filename", filename)
+                        // TODO: Retrieve username server side using session key
+                        //new KeyValue("username", username),
+                        new KeyValue("session_id", sessionId),
+                        new KeyValue("filename", filename)
                     ),
                     null
             ).toJson(), hostname, portnum));
@@ -98,27 +97,26 @@ public class ClientHandlerImpl implements ClientHandler {
     }
 
     @Override
-    public void list () throws IOException {
-        if (isLoggedIn()) {
-            socketHelper.send(new DatagramMessage(new Message(
-                    Request.LIST,
-                    null,
-                    Arrays.asList(
-                            //new KeyValue("username", username),
-                            new KeyValue("session_id", sessionId)
-                    ),
-                    ""
-            ).toJson(), hostname, portnum));
+    public List<FileDescription> list () throws IOException {
+        if (!isLoggedIn()) {
+            throw new AccessDeniedException("Must be logged in!");
+        }
 
-            Message serverResponse = Message.fromJson(socketHelper.receive().getMessage());
+        socketHelper.send(new DatagramMessage(new Message(
+                Request.LIST,
+                null,
+                Arrays.asList(
+                    new KeyValue("session_id", sessionId)
+                ),
+                ""
+        ).toJson(), hostname, portnum));
 
-            if (serverResponse.getResponse().equals(Response.SUCCESS)) {
-                System.out.println("Got Response from Server:\n" + serverResponse.getBody());
-            } else {
-                System.out.println("Login Response: " + serverResponse.getResponse());
-            }
+        Message serverResponse = Message.fromJson(socketHelper.receive().getMessage());
+
+        if (serverResponse.getResponse().equals(Response.SUCCESS)) {
+            return CSVUtil.csvToFileList(serverResponse.getBody());
         } else {
-            System.out.println("Must be logged in to list files");
+            throw new IOException();
         }
     }
 

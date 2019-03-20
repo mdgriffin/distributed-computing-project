@@ -1,8 +1,11 @@
 package com.mdgriffin.distributedcomputingproject.client;
 
+import com.mdgriffin.distributedcomputingproject.common.FileDescription;
 import com.mdgriffin.distributedcomputingproject.common.Message;
 
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
+import java.util.List;
 
 public interface ClientHandler {
 
@@ -14,7 +17,7 @@ public interface ClientHandler {
 
     void download(String destinationPath, String filename)  throws IOException;
 
-    void list ()  throws IOException;
+    List<FileDescription> list ()  throws IOException;
 
     void setSessionId(String sessionId);
 

@@ -5,6 +5,7 @@ import com.mdgriffin.distributedcomputingproject.common.*;
 import javax.security.auth.login.AccountNotFoundException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.Base64;
@@ -55,14 +56,8 @@ public class RequestHandlerImpl implements RequestHandler {
     @Override
     public Message list(Message message) {
         try {
-            String username = message.getHeaderValue("username");
-            String sessionId = message.getHeaderValue("session_id");
-
-            if (!authentication.hasActiveSession(username, sessionId)) {
-                throw new InvalidParameterException();
-            }
-
-            FileSystem fs = new FileSystemImpl(ROOT_DIRECTORY + username);
+            Session session = authentication.getActiveSession(message.getHeaderValue("session_id"));
+            FileSystem fs = new FileSystemImpl(ROOT_DIRECTORY + session.getUsername());
 
             List<FileDescription> userFiles = fs.listDirectory("");
 
@@ -70,20 +65,23 @@ public class RequestHandlerImpl implements RequestHandler {
                     message.getRequest(),
                     Response.SUCCESS,
                     null,
-                   fileListToCSV(userFiles)
+                   CSVUtil.fileListToCSV(userFiles)
             );
         } catch (InvalidParameterException exc) {
             return new Message(
-                    message.getRequest(),
-                    Response.ERROR,
-                    Arrays.asList(new KeyValue("message", "Must supply valid username and session ID")),
-                    ""
+                message.getRequest(),
+                Response.ERROR,
+                Arrays.asList(new KeyValue("message", "Must supply session ID")),
+                ""
+            );
+        } catch (AccessDeniedException exc) {
+            return new Message(
+                message.getRequest(),
+                Response.DENIED,
+                Arrays.asList(new KeyValue("message", "Session ID is invalid")),
+                ""
             );
         }
-    }
-
-    private static String fileListToCSV (List<FileDescription> filelist) {
-        return filelist.toString().replace(", ", "").replace("[", "").replace("]", "");
     }
 
     @Override

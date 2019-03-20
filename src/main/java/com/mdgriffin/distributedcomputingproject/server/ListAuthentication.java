@@ -1,6 +1,7 @@
 package com.mdgriffin.distributedcomputingproject.server;
 
 import javax.security.auth.login.AccountNotFoundException;
+import java.nio.file.AccessDeniedException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +36,24 @@ public class ListAuthentication implements  Authentication {
         }
 
         return false;
+    }
+
+    @Override
+    public boolean sessionIsActive(String sessionId) {
+        if (sessions.containsKey(sessionId)) {
+            Session session = sessions.get(sessionId);
+            return session.getExpiry().after(new Date());
+        }
+
+        return false;
+    }
+
+    @Override
+    public Session getActiveSession(String sessionId) throws AccessDeniedException {
+        if (!sessionIsActive(sessionId)) {
+            throw new AccessDeniedException("Session is inactive");
+        }
+        return this.sessions.get(sessionId);
     }
 
     @Override

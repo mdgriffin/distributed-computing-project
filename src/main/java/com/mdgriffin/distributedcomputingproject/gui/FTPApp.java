@@ -14,6 +14,8 @@ public class FTPApp extends Application {
 
     private Scene loginScene;
     private Scene fileManagerScene;
+    private LoginController loginController;
+    private FileManagerController fileManagerController;
     private Stage stage;
     private ClientHandler clientHandler;
     private static final int SERVER_PORT_NUM = 9090;
@@ -38,14 +40,14 @@ public class FTPApp extends Application {
 
         FXMLLoader loginLoader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
         Parent loginParent = loginLoader.load();
-        LoginController loginController = (LoginController) loginLoader.getController();
+        loginController = (LoginController) loginLoader.getController();
         loginController.setContext(this);
         loginScene = new Scene(loginParent, 500, 500);
         loginScene.getStylesheets().add(getClass().getResource("/css/ftp-app.css").toString());
 
         FXMLLoader fileManagerLoader = new FXMLLoader(getClass().getResource("/fxml/file-manager.fxml"));
         Parent fileManagerParent = fileManagerLoader.load();
-        FileManagerController fileManagerController = (FileManagerController) fileManagerLoader.getController();
+        fileManagerController = (FileManagerController) fileManagerLoader.getController();
         fileManagerController.setContext(this);
         fileManagerScene = new Scene(fileManagerParent, 500, 500);
         fileManagerScene.getStylesheets().add(getClass().getResource("/css/ftp-app.css").toString());
@@ -55,15 +57,18 @@ public class FTPApp extends Application {
         stage.show();
     }
 
+    /*
     public void changeToLogin () {
         if (stage != null && loginScene != null) {
             stage.setScene(loginScene);
         }
     }
+    */
 
     public void changeToFileManager () {
         if (stage != null && fileManagerScene != null) {
             stage.setScene(fileManagerScene);
+            fileManagerController.loadFileList();
         }
     }
 
