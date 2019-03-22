@@ -35,8 +35,6 @@ public class ClientHandlerImpl implements ClientHandler {
                 Request.DOWNLOAD,
                 null,
                 Arrays.asList(
-                    // TODO: Retrieve username server side using session key
-                    //new KeyValue("username", username),
                     new KeyValue("session_id", sessionId),
                     new KeyValue("filename", filename)
                 ),

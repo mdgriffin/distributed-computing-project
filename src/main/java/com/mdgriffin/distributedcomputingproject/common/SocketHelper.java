@@ -13,7 +13,6 @@ public class SocketHelper {
     private DatagramSocket socket;
     private static final int MAX_LEN = 200;
 
-
     public SocketHelper (DatagramSocket socket) {
         this.socket = socket;
     }

@@ -27,12 +27,12 @@
     - [X] Sending list to client
     - [X] List file size along with filename
 - [ ] Presentation
-    - [ ] Open Connection
+    - [ ] Add connection details to login
     - [X] Login View
     - [X] List Files View
-    - [ ] Open File Picker
+    - [X] Open File Picker
     - [ ] Make client handler observable
-    - [ ] Download button on row in the file table
+    - [X] Download button on row in the file table
 
 ## Bugs
 

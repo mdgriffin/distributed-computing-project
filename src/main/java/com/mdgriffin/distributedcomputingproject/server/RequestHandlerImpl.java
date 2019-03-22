@@ -131,7 +131,6 @@ public class RequestHandlerImpl implements RequestHandler {
                 throw new FileNotFoundException();
             }
 
-            // Encode Base64
             String fileContents = Base64.getEncoder().encodeToString(fs.readFile(filename));
 
             return new Message(
@@ -144,11 +143,9 @@ public class RequestHandlerImpl implements RequestHandler {
                     fileContents
             );
         } catch (InvalidParameterException exc) {
-            // TODO: Add builder to simplify message creation
             return new Message(
                 message.getRequest(),
-                // TODO: Change to DENIED
-                Response.ERROR,
+                Response.DENIED,
                 Arrays.asList(new KeyValue("message", "Must supply valid username and session ID")),
                 ""
             );
