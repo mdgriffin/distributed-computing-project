@@ -1,5 +1,19 @@
+.container {
+    -fx-padding: 0 0 0 0;
+    -fx-background-color: #fff;
+}
+
+.banner {
+    -fx-background-color: #63d145;
+    -fx-padding: 10;
+}
+
+.subbanner {
+    -fx-background-color: #eaeaea;
+    -fx-padding: 5;
+}
+
 .mainheading {
-    -fx-background-color: #ff0000;
     -fx-text-fill: #fff;
     -fx-font: NORMAL 30 Tahoma;
 }

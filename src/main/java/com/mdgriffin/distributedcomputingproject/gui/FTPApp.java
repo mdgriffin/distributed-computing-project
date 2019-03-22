@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import jfxtras.styles.jmetro8.JMetro;
 
 import java.io.IOException;
 
@@ -51,6 +52,9 @@ public class FTPApp extends Application {
         fileManagerController.setContext(this);
         fileManagerScene = new Scene(fileManagerParent, 500, 500);
         fileManagerScene.getStylesheets().add(getClass().getResource("/css/ftp-app.css").toString());
+
+        //new JMetro(JMetro.Style.LIGHT).applyTheme(loginScene);
+        //new JMetro(JMetro.Style.LIGHT).applyTheme(fileManagerScene);
 
         stage.setTitle("FTP Express");
         stage.setScene(loginScene);
