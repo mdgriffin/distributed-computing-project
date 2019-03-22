@@ -12,6 +12,7 @@ import javafx.util.Callback;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 
 public class FileManagerController {
 
@@ -53,9 +54,12 @@ public class FileManagerController {
                 loadFileList();
                 Alert alert = new Alert(Alert.AlertType.INFORMATION, "File uploaded successfully");
                 alert.showAndWait();
-                System.out.println("Path: " + selectedFile.getPath());
+            } catch (AccessDeniedException exc) {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "You do not have permission to upload this file");
+                alert.showAndWait();
             } catch (IOException exc) {
-                System.out.println("Exception: " + exc.getMessage());
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to upload file");
+                alert.showAndWait();
             }
         }
     }
@@ -66,10 +70,9 @@ public class FileManagerController {
                 files = FXCollections.observableArrayList(clientHandler.list());
                 tblFileList.setItems(files);
             } catch (IOException exc) {
-                System.out.println(exc.getMessage());
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to retrieve file listing");
+                alert.showAndWait();
             }
-        } else {
-            System.out.println("Client Handler Not Set!");
         }
     }
 
@@ -104,8 +107,11 @@ public class FileManagerController {
 
                                 try {
                                     clientHandler.download(downloadPath, fileDescription.getFilename(), newFilename);
+                                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "File Downloaded Successfully");
+                                    alert.showAndWait();
                                 } catch (IOException exc) {
-                                    System.out.println("Failed to download the file:\n" + exc.getMessage());
+                                    Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to download file");
+                                    alert.showAndWait();
                                 }
                             }
                         });
