@@ -25,35 +25,35 @@ public class ClientHandlerImpl implements ClientHandler {
 
     @Override
     public void download (String destinationPath, String filename, String newFileName) throws IOException {
-        if (isLoggedIn()) {
-            FileSystem fs = new FileSystemImpl(destinationPath);
+        if (!isLoggedIn()) {
+            throw new AccessDeniedException("Must be logged in to download files");
+        }
 
-            socketHelper.send(new DatagramMessage(new Message(
-                    Request.DOWNLOAD,
-                    null,
-                    Arrays.asList(
-                        // TODO: Retrieve username server side using session key
-                        //new KeyValue("username", username),
-                        new KeyValue("session_id", sessionId),
-                        new KeyValue("filename", filename)
-                    ),
-                    null
-            ).toJson(), hostname, portnum));
+        FileSystem fs = new FileSystemImpl(destinationPath);
 
-            Message serverResponse = Message.fromJson(socketHelper.receive().getMessage());
+        socketHelper.send(new DatagramMessage(new Message(
+                Request.DOWNLOAD,
+                null,
+                Arrays.asList(
+                    // TODO: Retrieve username server side using session key
+                    //new KeyValue("username", username),
+                    new KeyValue("session_id", sessionId),
+                    new KeyValue("filename", filename)
+                ),
+                null
+        ).toJson(), hostname, portnum));
 
-            if (serverResponse.getResponse().equals(Response.SUCCESS)) {
-                // decode file contents
-                byte[] fileContents = Base64.getDecoder().decode(serverResponse.getBody().getBytes());
-                fs.saveFile(newFileName, fileContents);
+        Message serverMessage = Message.fromJson(socketHelper.receive().getMessage());
+        Response serverResponse = serverMessage.getResponse();
+        String message = serverMessage.getHeaderValue("message");
 
-                System.out.println("Successfully downloaded file");
-            } else {
-                String message = serverResponse.getHeaderValue("message");
-                System.out.println("Download Failed: " + message);
-            }
+        if (serverResponse.equals(Response.SUCCESS)) {
+            byte[] fileContents = Base64.getDecoder().decode(serverMessage.getBody().getBytes());
+            fs.saveFile(newFileName, fileContents);
+        } else if (serverResponse.equals(Response.DENIED)) {
+            throw new AccessDeniedException(message);
         } else {
-            System.out.println("Must be logged in to download files");
+            throw new IOException(message);
         }
     }
 

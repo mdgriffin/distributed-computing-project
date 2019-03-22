@@ -87,17 +87,9 @@ public class RequestHandlerImpl implements RequestHandler {
     @Override
     public Message upload (Message message) {
         try {
-            //String username = message.getHeaderValue("username");
-            //String sessionId = message.getHeaderValue("session_id");
             Session session = authentication.getActiveSession(message.getHeaderValue("session_id"));
             String filename = message.getHeaderValue("filename");
             FileSystem fs = new FileSystemImpl(ROOT_DIRECTORY);
-
-            /*
-            if (!authentication.hasActiveSession(username, sessionId)) {
-                throw new InvalidParameterException();
-            }
-            */
 
             if (!fs.directoryExists(session.getUsername())) {
                 fs.createDirectory(session.getUsername());
@@ -131,14 +123,9 @@ public class RequestHandlerImpl implements RequestHandler {
     @Override
     public Message download(Message message) {
         try {
-            String username = message.getHeaderValue("username");
-            String sessionId = message.getHeaderValue("session_id");
+            Session session = authentication.getActiveSession(message.getHeaderValue("session_id"));
             String filename = message.getHeaderValue("filename");
-            FileSystem fs = new FileSystemImpl(ROOT_DIRECTORY + username + "/");
-
-            if (!authentication.hasActiveSession(username, sessionId)) {
-                throw new InvalidParameterException();
-            }
+            FileSystem fs = new FileSystemImpl(ROOT_DIRECTORY + session.getUsername() + "/");
 
             if (!fs.fileExists(filename)) {
                 throw new FileNotFoundException();
@@ -151,7 +138,8 @@ public class RequestHandlerImpl implements RequestHandler {
                     message.getRequest(),
                     Response.SUCCESS,
                     Arrays.asList(
-                        new KeyValue("filename", filename)
+                        new KeyValue("filename", filename),
+                        new KeyValue("message", "Successfully requested file for download")
                     ),
                     fileContents
             );

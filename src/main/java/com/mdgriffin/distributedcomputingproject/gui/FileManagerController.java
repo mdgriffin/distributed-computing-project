@@ -92,21 +92,21 @@ public class FileManagerController {
 
                     {
                         btn.setOnAction((ActionEvent event) -> {
-                            FileDescription data = getTableView().getItems().get(getIndex());
-                            System.out.println("selectedData: " + data);
-                            // TODO: Implement Download
-                            // 1. Open file picker with destination to download
-                            // 2. Check that filename contains extension
-                            // Call download on client handler
-
+                            FileDescription fileDescription = getTableView().getItems().get(getIndex());
                             FileChooser fileChooser = new FileChooser();
                             fileChooser.setTitle("Select File");
 
                             File fileLocation = fileChooser.showSaveDialog(context.getStage());
 
                             if (fileLocation != null) {
-                                System.out.println("Filename:" + fileLocation.getName());
-                                System.out.println("Location" + fileLocation.getPath());
+                                String newFilename = fileLocation.getName();
+                                String downloadPath = fileLocation.getPath().substring(0, fileLocation.getPath().lastIndexOf(File.separator)) + "/";
+
+                                try {
+                                    clientHandler.download(downloadPath, fileDescription.getFilename(), newFilename);
+                                } catch (IOException exc) {
+                                    System.out.println("Failed to download the file:\n" + exc.getMessage());
+                                }
                             }
                         });
                     }
