@@ -13,12 +13,17 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.Menu?>
-<VBox styleClass="container" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mdgriffin.distributedcomputingproject.gui.FileManagerController">
+<?import javafx.scene.control.MenuItem?>
+<VBox fx:id="mainContainer" styleClass="container" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mdgriffin.distributedcomputingproject.gui.FileManagerController">
 
     <MenuBar>
         <menus>
-            <Menu text="Logout"></Menu>
-            <Menu text="Upload File"></Menu>
+            <Menu text="User">
+                <MenuItem text="Logout"></MenuItem>
+            </Menu>
+            <Menu text="Actions">
+                <MenuItem text="Upload File" onAction="#onBtnUploadClick"></MenuItem>
+            </Menu>
         </menus>
     </MenuBar>
 
@@ -31,8 +36,8 @@
                 preserveRatio="true">
             <image>
                 <Image
-                        url="/images/ftp-icon.png"
-                        backgroundLoading="true"/>
+                    url="/images/ftp-icon.png"
+                    backgroundLoading="true"/>
             </image>
         </ImageView>
         <Label styleClass="mainheading" >File Transfer Express</Label>
@@ -53,5 +58,5 @@
         </columns>
     </TableView>
 
-    <Button onAction="#onBtnUploadClick" >Upload File</Button>
+    <Button fx:id="btnUpload" onAction="#onBtnUploadClick" prefWidth="${mainContainer.width}">Upload File</Button>
 </VBox>
