@@ -18,11 +18,11 @@
 
     <MenuBar>
         <menus>
-            <Menu text="User">
-                <MenuItem text="Logout"></MenuItem>
-            </Menu>
-            <Menu text="Actions">
+            <Menu text="File">
                 <MenuItem text="Upload File" onAction="#onBtnUploadClick"></MenuItem>
+            </Menu>
+            <Menu text="User">
+                <MenuItem text="Logout" onAction="#onBtnLogoffClick"></MenuItem>
             </Menu>
         </menus>
     </MenuBar>

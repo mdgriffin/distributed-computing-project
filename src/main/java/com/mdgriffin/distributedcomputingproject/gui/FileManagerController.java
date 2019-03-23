@@ -34,17 +34,27 @@ public class FileManagerController {
     }
 
     @FXML
-    public void onBtnUploadClick (ActionEvent event) {
-        System.out.println("On button click");
+    public void onBtnLogoffClick () {
+        boolean loggedOff = clientHandler.logoff();
 
+        if (loggedOff) {
+            context.changeToLogin();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to logoff");
+            alert.showAndWait();
+        }
+    }
+
+    @FXML
+    public void onBtnUploadClick (ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select File");
 
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Text Files", "*.txt"),
-                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif"),
-                new FileChooser.ExtensionFilter("Audio Files", "*.wav", "*.mp3", "*.aac"),
-                new FileChooser.ExtensionFilter("All Files", "*.*"));
+            new FileChooser.ExtensionFilter("Text Files", "*.txt"),
+            new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif"),
+            new FileChooser.ExtensionFilter("Audio Files", "*.wav", "*.mp3", "*.aac"),
+            new FileChooser.ExtensionFilter("All Files", "*.*"));
 
         File selectedFile = fileChooser.showOpenDialog(context.getStage());
 

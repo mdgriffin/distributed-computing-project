@@ -61,13 +61,11 @@ public class FTPApp extends Application {
         stage.show();
     }
 
-    /*
     public void changeToLogin () {
         if (stage != null && loginScene != null) {
             stage.setScene(loginScene);
         }
     }
-    */
 
     public void changeToFileManager () {
         if (stage != null && fileManagerScene != null) {

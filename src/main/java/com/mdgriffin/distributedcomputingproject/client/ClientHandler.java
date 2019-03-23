@@ -21,5 +21,7 @@ public interface ClientHandler {
 
     void setSessionId(String sessionId);
 
+    boolean logoff ();
+
     boolean isLoggedIn ();
 }

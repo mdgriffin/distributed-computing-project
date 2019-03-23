@@ -125,6 +125,31 @@ public class ClientHandlerImpl implements ClientHandler {
     }
 
     @Override
+    public boolean logoff() {
+        if (isLoggedIn()) {
+            try {
+                socketHelper.send(new DatagramMessage(new Message(
+                    Request.LOGOFF,
+                    null,
+                    Arrays.asList(
+                            new KeyValue("session_id", sessionId)
+                    ),
+                    ""
+                ).toJson(), hostname, portnum));
+
+                Message serverMessage = Message.fromJson(socketHelper.receive().getMessage());
+
+                if (serverMessage.getResponse().equals(Response.SUCCESS)) {
+                    return true;
+                }
+            } catch (IOException exc) {
+            }
+        }
+
+        return false;
+    }
+
+    @Override
     public Message login (String username, String password) throws IOException {
         socketHelper.send(new DatagramMessage(new Message(
                 Request.LOGIN,
