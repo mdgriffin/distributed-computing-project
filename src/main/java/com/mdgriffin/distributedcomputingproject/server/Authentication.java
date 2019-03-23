@@ -10,6 +10,6 @@ public interface Authentication {
     boolean sessionIsActive (String sessionId);
     Session getActiveSession(String sessionId) throws AccessDeniedException;
     Session login (String username, String password) throws AccountNotFoundException;
-    void logoff (String username);
+    boolean logoff (String username);
     Map<String, Session> getSessions ();
 }

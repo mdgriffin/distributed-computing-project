@@ -68,8 +68,15 @@ public class ListAuthentication implements  Authentication {
     }
 
     @Override
-    public void logoff(String username) {
-        sessions.entrySet().removeIf(entry -> entry.getValue().getUsername().equals(username));
+    public boolean logoff(String sessionId) {
+        Session session = sessions.get(sessionId);
+
+        if (session != null) {
+            sessions.entrySet().removeIf(entry -> entry.getValue().getUsername().equals(session.getUsername()));
+            return true;
+        }
+
+        return false;
     }
 
     @Override

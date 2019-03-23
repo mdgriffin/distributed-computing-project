@@ -12,4 +12,6 @@ public interface RequestHandler {
 
     Message download (Message message);
 
+    Message logoff (Message message);
+
 }

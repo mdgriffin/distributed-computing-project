@@ -166,4 +166,34 @@ public class RequestHandlerImpl implements RequestHandler {
         }
     }
 
+    @Override
+    public Message logoff(Message message) {
+        try {
+            boolean loggedOff = authentication.logoff(message.getHeaderValue("session_id"));
+
+            if (loggedOff) {
+                return new Message(
+                    message.getRequest(),
+                    Response.SUCCESS,
+                    Arrays.asList(new KeyValue("message", "Successfully logged off")),
+                    ""
+                );
+            } else  {
+                return new Message(
+                    message.getRequest(),
+                    Response.ERROR,
+                    Arrays.asList(new KeyValue("message", "Invalid Session Key Provides")),
+                    ""
+                );
+            }
+        } catch (InvalidParameterException exc) {
+            return new Message(
+                message.getRequest(),
+                Response.ERROR,
+                Arrays.asList(new KeyValue("message", "Error Retrieving File")),
+                ""
+            );
+        }
+    }
+
 }

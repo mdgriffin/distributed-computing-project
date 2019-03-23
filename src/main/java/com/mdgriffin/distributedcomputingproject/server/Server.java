@@ -51,11 +51,14 @@ public class Server {
                         case DOWNLOAD:
                             handleDownload(receivedMessage, message);
                             break;
+                        case LOGOFF:
+                            handleLogoff(receivedMessage, message);
                         default:
                             break;
                     }
                 }
             } catch (Exception exc) {
+
                 System.out.println(exc);
             }
         }
@@ -75,6 +78,10 @@ public class Server {
 
     private void handleLogin (DatagramMessage datagramMessage, Message message) throws IOException {
         socketHelper.send(new DatagramMessage(requestHandler.login(message).toJson(), datagramMessage.getAddress(), datagramMessage.getPortNum()));
+    }
+
+    private void handleLogoff (DatagramMessage datagramMessage, Message message) throws IOException {
+        socketHelper.send(new DatagramMessage(requestHandler.logoff(message).toJson(), datagramMessage.getAddress(), datagramMessage.getPortNum()));
     }
 
 }
