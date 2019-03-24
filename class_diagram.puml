@@ -5,51 +5,158 @@ package common {
 
 class SocketHelper
 
-interface FileSystem
+interface FileSystem {
+    +saveFile(String path, byte[] data)
+    +readFile(String path):byte[]
+    +deleteFile (String path):boolean
+    +createDirectory(String path):boolean
+    +deleteDirectory (String path):boolean
+    +listDirectory (String path):List<FileDescription>
+    +listDirectory (String path, boolean includeDirectories):List<FileDescription>
+    +directoryExists (String path):boolean
+    +fileExists (String path):boolean
+}
+
+enum Request {
+    LOGIN,
+    LOGOFF,
+    UPLOAD,
+    DOWNLOAD,
+    LIST
+}
+
+enum Response {
+    SUCCESS,
+    ERROR,
+    DENIED,
+    NOT_FOUND
+}
+
+class PackageSegmenter {
+    PackageSegmenter(packet:byte[], packetSize:int)
+    int getNumPackets
+}
+
+class Message {
+    + toJson():String
+    # fromJSon(Message):void
+    +getRequest():Request
+    +getResponse():Response
+    +getBody():String
+    +getHeader():List<KeyValue>
+}
+
+class KeyValue {
+    +getKey():String
+    +getValue():String
+}
+
+Message --* Request
+Message --* Response
+Message --* KeyValue
+
+SocketHelper --o PackageSegmenter
+
+interface Iterator {
+    boolean hasNext
+    byte[] next
+}
+
+PackageSegmenter --|> Iterator
 
 }
 
 package client {
 
-class Client
+class ConsoleClient
 
-interface ClientHandler
+interface ClientHandler {
+    +login (String username, String password):Message
+    +upload(String path, String filename):boolean
+    +download(String destinationPath, String filename, String newFileName)  throws IOException;
+    +download(String destinationPath, String filename)  throws IOException;
+    +list ():List<FileDescription>
+    +setSessionId(String sessionId);
+    +logoff ():boolean
+    +isLoggedIn ():boolean
+}
 
 class ClientHandlerImpl
 
 ClientHandler ..|> ClientHandlerImpl
-
-Client --o ClientHandler
-
+ConsoleClient --o ClientHandler
 ClientHandlerImpl --o SocketHelper
-
 ClientHandlerImpl --o FileSystem
+ClientHandlerImpl --o Message
 
 }
 
 package server {
 
-class Server
+class Server {
+    Server(RequestHandler)
+    +listen()
+}
 
-interface RequestHandler
+interface RequestHandler {
+    +login(Message message):Message
+    +ist (Message message):Message
+    +upload (Message message):Message
+    +download (Message message):Message
+    +logoff (Message message):Message
+}
+
+interface Session {
+    +getId ():String
+    +getExpiry ():Date
+    +getUsername():String
+}
+
+interface Authentication {
+    isValidUser (String username, String password):boolean
+    hasActiveSession (String username, String sessionId):boolean
+    sessionIsActive (String sessionId):boolean
+    getActiveSession(String sessionId):Session
+    login (String username, String password):Session
+    logoff (String username):boolean
+    getSessions ():Map<String, Session>
+}
 
 class RequestHandlerImpl
 
-RequestHandlerImpl --|> RequestHandler
+RequestHandlerImpl ..|> RequestHandler
+RequestHandlerImpl ..o Message
 
 Server --o RequestHandler
 
 RequestHandlerImpl --o FileSystem
+RequestHandlerImpl --o Authentication
+RequestHandlerImpl --o ListAuthentication
 
+ListAuthentication ..|> Authentication
+
+ListAuthentication --* Session
+
+RequestHandlerImpl --o SocketHelper
 }
 
 package gui {
 
-class FTPApp
+class FTPApp {
+    +start(Stage)
+    +changeToLogin()
+    +changeToFileManager()
+    +getClientHandler():ClientHandler
+    +Stage:getStage()
+}
 
-class LoginController
+class LoginController {
+    +setContext(FTPApp context)
+}
 
-class FileManagerController
+class FileManagerController {
+   +setContext(FTPApp context)
+}
 
 FTPApp --o LoginController
 FTPApp --o FileManagerController
