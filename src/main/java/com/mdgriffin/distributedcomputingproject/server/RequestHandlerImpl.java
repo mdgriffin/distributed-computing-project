@@ -182,7 +182,7 @@ public class RequestHandlerImpl implements RequestHandler {
                 return new Message(
                     message.getRequest(),
                     Response.ERROR,
-                    Arrays.asList(new KeyValue("message", "Invalid Session Key Provides")),
+                    Arrays.asList(new KeyValue("message", "Invalid Session Key Provided")),
                     ""
                 );
             }
@@ -190,7 +190,7 @@ public class RequestHandlerImpl implements RequestHandler {
             return new Message(
                 message.getRequest(),
                 Response.ERROR,
-                Arrays.asList(new KeyValue("message", "Error Retrieving File")),
+                Arrays.asList(new KeyValue("message", "Session ID is required")),
                 ""
             );
         }

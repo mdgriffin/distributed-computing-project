@@ -79,9 +79,9 @@ public class ClientHandlerImpl implements ClientHandler {
             fileContents
         ).toJson(), hostname, portnum));
 
-        Message ServerMessage = Message.fromJson(socketHelper.receive().getMessage());
-        String message = ServerMessage.getHeaderValue("message");
-        Response serverResponse = ServerMessage.getResponse();
+        Message serverMessage = Message.fromJson(socketHelper.receive().getMessage());
+        String message = serverMessage.getHeaderValue("message");
+        Response serverResponse = serverMessage.getResponse();
 
         if (serverResponse.equals(Response.DENIED)) {
             throw new AccessDeniedException(message);
@@ -132,7 +132,7 @@ public class ClientHandlerImpl implements ClientHandler {
                     Request.LOGOFF,
                     null,
                     Arrays.asList(
-                            new KeyValue("session_id", sessionId)
+                        new KeyValue("session_id", sessionId)
                     ),
                     ""
                 ).toJson(), hostname, portnum));

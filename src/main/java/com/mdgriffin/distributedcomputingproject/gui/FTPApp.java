@@ -41,14 +41,14 @@ public class FTPApp extends Application {
 
         FXMLLoader loginLoader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
         Parent loginParent = loginLoader.load();
-        loginController = (LoginController) loginLoader.getController();
+        loginController = loginLoader.getController();
         loginController.setContext(this);
         loginScene = new Scene(loginParent, 500, 500);
         loginScene.getStylesheets().add(getClass().getResource("/css/ftp-app.css").toString());
 
         FXMLLoader fileManagerLoader = new FXMLLoader(getClass().getResource("/fxml/file-manager.fxml"));
         Parent fileManagerParent = fileManagerLoader.load();
-        fileManagerController = (FileManagerController) fileManagerLoader.getController();
+        fileManagerController = fileManagerLoader.getController();
         fileManagerController.setContext(this);
         fileManagerScene = new Scene(fileManagerParent, 500, 500);
         fileManagerScene.getStylesheets().add(getClass().getResource("/css/ftp-app.css").toString());

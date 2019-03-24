@@ -9,10 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
-import java.io.File;
 import java.io.IOException;
 
 public class LoginController {
@@ -20,7 +17,6 @@ public class LoginController {
     @FXML private TextField txtUsername;
     @FXML private TextField txtPassword;
     @FXML private Label lblLoginError;
-    @FXML private ImageView iconImage;
     private FTPApp context;
 
     public LoginController() { }
