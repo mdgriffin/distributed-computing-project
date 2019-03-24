@@ -1,23 +1,21 @@
 @startuml
-group Login
 Client -> Server: **LOGIN** Request
 
-    Server -> Authenticator: Check username and password
+Server -> Authenticator: Check username and password
 
-    group Login Success
-        Authenticator --> Server: Is registered user
-        Server --> Client: **SUCCESS** Response
-        Server --> Client: Session Key
-    end
+group Login Success
+    Authenticator --> Server: Is registered user
+    Server --> Client: **SUCCESS** Response
+    Server --> Client: Session Key
+end
 
-    group Login Denied
-        Authenticator --> Server: Is not registered user
-        Server --> Client: **DENIED** Response
-    end
+group Login Denied
+    Authenticator --> Server: Is not registered user
+    Server --> Client: **DENIED** Response
+end
 
-    group Login Error
-        Authenticator --> Server: Is not registered user
-        Server --> Client: **ERROR** Response
-    end
+group Login Error
+    Authenticator --> Server: Is not registered user
+    Server --> Client: **ERROR** Response
 end
 @enduml
