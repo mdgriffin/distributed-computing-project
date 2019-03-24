@@ -2,7 +2,7 @@ package com.mdgriffin.distributedcomputingproject.client;
 
 import java.io.*;
 
-public class Client {
+public class ConsoleClient {
 
     private static final int SERVER_PORT_NUM = 9090;
     private static final String SERVER_HOSTNAME = "localhost";
@@ -14,14 +14,14 @@ public class Client {
 
     public static void main(String[] args) {
         try {
-            Client client = new Client(new ClientHandlerImpl(SERVER_HOSTNAME, SERVER_PORT_NUM));
+            ConsoleClient client = new ConsoleClient(new ClientHandlerImpl(SERVER_HOSTNAME, SERVER_PORT_NUM));
             client.start();
         } catch (IOException exc) {
             System.out.println("Issue connecting to client: " + exc.getMessage());
         }
     }
 
-    public Client (ClientHandler clientHandler) {
+    public ConsoleClient(ClientHandler clientHandler) {
         this.clientHandler = clientHandler;
     }
 
