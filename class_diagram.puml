@@ -1,0 +1,61 @@
+@startuml
+
+
+package common {
+
+class SocketHelper
+
+interface FileSystem
+
+}
+
+package client {
+
+class Client
+
+interface ClientHandler
+
+class ClientHandlerImpl
+
+ClientHandler ..|> ClientHandlerImpl
+
+Client --o ClientHandler
+
+ClientHandlerImpl --o SocketHelper
+
+ClientHandlerImpl --o FileSystem
+
+}
+
+package server {
+
+class Server
+
+interface RequestHandler
+
+class RequestHandlerImpl
+
+RequestHandlerImpl --|> RequestHandler
+
+Server --o RequestHandler
+
+RequestHandlerImpl --o FileSystem
+
+}
+
+package gui {
+
+class FTPApp
+
+class LoginController
+
+class FileManagerController
+
+FTPApp --o LoginController
+FTPApp --o FileManagerController
+
+FTPApp --o ClientHandler
+
+}
+
+@enduml
