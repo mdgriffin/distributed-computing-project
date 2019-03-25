@@ -4,34 +4,40 @@ entity Server
 Database "Session Store"
 Database "File Store"
 
-Client -> Server: **LIST** Request
-Client -> Server: Session Key
+group Request Message
+    Client -> Server: **LIST** Request
+    Client -> Server: Session Key
+end
+
 Server -> "Session Store": Check if Session Key is Valid
 "Session Store" --> Server: Session Key check result
 
-group Has valid Session Key Success
+alt Has valid Session Key Success
     Server -> "File Store": Get list of Files in User Directory
     "File Store" --> Server: File Listing result
 
-    group File Listing Retrieved Successfully
-        Server --> Client: **SUCCESS** Response
-        Server --> Client: SUCCESS Header Message
-        Server --> Client: File Listing
+    alt File Listing Retrieved Successfully
+        group Response Message
+            Server --> Client: **SUCCESS** Response
+            Server --> Client: SUCCESS Header Message
+            Server --> Client: File Listing
+        end
+    else Failed to retrieve File Listing
+        group Response Message
+            Server --> Client: **ERROR** Response
+            Server --> Client: ERROR Reason Header Message
+        end
     end
 
-    group Failed to retrieve File Listing
-        Server --> Client: **ERROR** Response
-        Server --> Client: ERROR Reason Header Message
+else Invalid Session Key
+    group Response Message
+        Server --> Client: **Denied** Response
+        Server --> Client: DENIED Reason Header Message
     end
-end
-
-group Invalid Session Key
-    Server --> Client: **Denied** Response
-    Server --> Client: DENIED Reason Header Message
-end
-
-group Session Key not provided with Request
-    Server --> Client: **Error** Response
-    Server --> Client: DENIED Reason Header Message
+else Session Key not provided with Request
+    group Response Message
+        Server --> Client: **Error** Response
+        Server --> Client: DENIED Reason Header Message
+    end
 end
 @enduml

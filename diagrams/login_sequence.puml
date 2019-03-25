@@ -3,27 +3,34 @@ actor Client
 entity Server
 entity Authenticator
 
-Client -> Server: **LOGIN** Request
-Client -> Server: Username and Password
+group Request Message
+    Client -> Server: **LOGIN** Request
+    Client -> Server: Username and Password
+end
 
 Server -> Authenticator: Check Username and Password
 
-group Login Success
+alt Login Success
     Authenticator --> Server: User is Valid
-    Server --> Client: **SUCCESS** Response
-    Server --> Client: SUCCESS Header Message
-    Server --> Client: Session Key
-end
+    group Response Message
+        Server --> Client: **SUCCESS** Response
+        Server --> Client: SUCCESS Header Message
+        Server --> Client: Session Key
+    end
 
-group Login Denied
+else Login Denied
     Authenticator --> Server: Is not registered user
-    Server --> Client: **DENIED** Response
-    Server --> Client: DENIED Reason Header Message
-end
 
-group Login Error
+    group Response Message
+        Server --> Client: **DENIED** Response
+        Server --> Client: DENIED Reason Header Message
+    end
+
+else Login Error
     Authenticator --> Server: Is not registered user
-    Server --> Client: **ERROR** Response
-    Server --> Client: ERROR Reason Header Message
+    group Response Message
+        Server --> Client: **ERROR** Response
+        Server --> Client: ERROR Reason Header Message
+    end
 end
 @enduml

@@ -11,29 +11,25 @@ Client -> Server: Session Key
 Server -> "Session Store": Check if Session Key is valid
 "Session Store" --> Server: Session Key is valid result
 
-group Has valid Session Key Success
+alt Has valid Session Key Success
     Server --> Server: Decode Base64
     Server -> "File Store": Create user directory if not exists
     Server -> "File Store": Save Decoded Base64 file data
     "File Store" --> Server: File saving result
 
-    group File Stored Successfully
+    alt File Stored Successfully
         Server --> Client: **SUCCESS** Response
         Server --> Client: SUCCESS Header Message
-    end
-
-    group Failed to save file
+    else Failed to save file
         Server --> Client: **Error** Response
         Server --> Client: ERROR Reason Header Message
     end
-end
 
-group Invalid Session Key
+else Invalid Session Key
     Server --> Client: **Denied** Response
     Server --> Client: DENIED Reason Header Message
-end
 
-group Session Key not provided with request
+else Session Key not provided with request
     Server --> Client: **Error** Response
     Server --> Client: ERROR Reason Header Message
 end
