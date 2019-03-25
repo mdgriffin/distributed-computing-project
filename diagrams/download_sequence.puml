@@ -1,38 +1,50 @@
 @startuml
+actor Client
+entity Server
+Database "Session Store"
+Database "File Store"
+
 Client -> Server: **Download** Request
 Client -> Server: Session Key
 Client -> Server: File Name
 
 Server -> "Session Store": Check if Session Key is valid
+"Session Store" --> Server: Session Key check result
 
 group Has valid Session Key Success
-    Server -> "File Store": Check if file exists in user directory
+    Server -> "File Store": Check if File exists in User directory
+    "File Store" --> Server: File exists check result
 
     group File Exists
         Server -> "File Store": Request File
-        "File Store" -> Server: File Contents
+        "File Store" --> Server: File Contents
 
-        group Successfully Retrived File
+        group Successfully Retrieved File
             Server -> Server: Encode file as Base64
-            Server -> Client: **SUCCESS** Response
-            Server -> Client: Base64 file data
+            Server --> Client: **SUCCESS** Response
+            Server --> Client: SUCCESS Header Message
+            Server --> Client: Base64 file data
         end
 
-        group Failed to retrieve file
-            Server -> Client: **ERROR** Response
+        group Failed to retrieve File
+            Server --> Client: **ERROR** Response
+            Server --> Client: ERROR Reason Header Message
         end
     end
 
     group File Not Found
-        Server -> Client: **FILE_NOT_FOUND** Response
+        Server --> Client: **FILE_NOT_FOUND** Response
+        Server --> Client: FILE_NOT_FOUND Reason Header Message
     end
 end
 
 group Invalid Session Key
-    Server -> Client: **Denied** Response
+    Server --> Client: **Denied** Response
+    Server --> Client: DENIED Reason Header Message
 end
 
-group Session Key not provided with request
-    Server -> Client: **Error** Response
+group Session Key not provided with Request
+    Server --> Client: **Error** Response
+    Server --> Client: ERROR Reason Header Message
 end
 @enduml

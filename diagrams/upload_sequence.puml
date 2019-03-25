@@ -1,30 +1,40 @@
 @startuml
+actor Client
+entity Server
+Database "Session Store"
+Database "File Store"
+
 Client -> Server: **UPLOAD** Request
 Client -> Server: Base64 File Data
 Client -> Server: Session Key
 
 Server -> "Session Store": Check if Session Key is valid
+"Session Store" --> Server: Session Key is valid result
 
 group Has valid Session Key Success
-    Server -> Server: Decode Base64
+    Server --> Server: Decode Base64
     Server -> "File Store": Create user directory if not exists
     Server -> "File Store": Save Decoded Base64 file data
-    "File Store" -> Server: File saving result
+    "File Store" --> Server: File saving result
 
     group File Stored Successfully
         Server --> Client: **SUCCESS** Response
+        Server --> Client: SUCCESS Header Message
     end
 
     group Failed to save file
         Server --> Client: **Error** Response
+        Server --> Client: ERROR Reason Header Message
     end
 end
 
 group Invalid Session Key
-    Server -> Client: **Denied** Response
+    Server --> Client: **Denied** Response
+    Server --> Client: DENIED Reason Header Message
 end
 
 group Session Key not provided with request
-    Server -> Client: **Error** Response
+    Server --> Client: **Error** Response
+    Server --> Client: ERROR Reason Header Message
 end
 @enduml

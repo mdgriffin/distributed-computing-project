@@ -1,17 +1,22 @@
 @startuml
+actor Client
+entity Server
+Database "Session Store"
+
 Client -> Server: **LOGOUT** Request
 Client -> Server: Session Key
 
 Server -> "Session Store": Delete Session Key if it exists
 
 group Logout Success
-
     "Session Store" --> Server: Session Key Deleted
     Server --> Client: **SUCCESS** Response
+    Server --> Client: SUCCESS Header Message
 end
 
 group Logout Error
     "Session Store" --> Server: Session Key not valid
     Server --> Client: **ERROR** Response
+    Server --> Client: ERROR Reason Header Message
 end
 @enduml
