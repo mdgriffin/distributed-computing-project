@@ -1,0 +1,38 @@
+@startuml
+Client -> Server: **Download** Request
+Client -> Server: Session Key
+Client -> Server: File Name
+
+Server -> "Session Store": Check if Session Key is valid
+
+group Has valid Session Key Success
+    Server -> "File Store": Check if file exists in user directory
+
+    group File Exists
+        Server -> "File Store": Request File
+        "File Store" -> Server: File Contents
+
+        group Successfully Retrived File
+            Server -> Server: Encode file as Base64
+            Server -> Client: **SUCCESS** Response
+            Server -> Client: Base64 file data
+        end
+
+        group Failed to retrieve file
+            Server -> Client: **ERROR** Response
+        end
+    end
+
+    group File Not Found
+        Server -> Client: **FILE_NOT_FOUND** Response
+    end
+end
+
+group Invalid Session Key
+    Server -> Client: **Denied** Response
+end
+
+group Session Key not provided with request
+    Server -> Client: **Error** Response
+end
+@enduml

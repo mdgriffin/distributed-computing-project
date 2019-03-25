@@ -1,0 +1,30 @@
+@startuml
+Client -> Server: **UPLOAD** Request
+Client -> Server: Base64 File Data
+Client -> Server: Session Key
+
+Server -> "Session Store": Check if Session Key is valid
+
+group Has valid Session Key Success
+    Server -> Server: Decode Base64
+    Server -> "File Store": Create user directory if not exists
+    Server -> "File Store": Save Decoded Base64 file data
+    "File Store" -> Server: File saving result
+
+    group File Stored Successfully
+        Server --> Client: **SUCCESS** Response
+    end
+
+    group Failed to save file
+        Server --> Client: **Error** Response
+    end
+end
+
+group Invalid Session Key
+    Server -> Client: **Denied** Response
+end
+
+group Session Key not provided with request
+    Server -> Client: **Error** Response
+end
+@enduml

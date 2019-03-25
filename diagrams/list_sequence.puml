@@ -1,0 +1,30 @@
+@startuml
+Client -> Server: **LIST** Request
+Client -> Server: Session Key
+Server -> "Session Store": Check if Session Key is Valid
+
+group Has valid Session Key Success
+    Server -> "File Store": Get list of Files in User Directory
+
+    group File Listing Retrieved Successfully
+        "File Store" -> Server: File Listing
+        Server -> Client: **SUCCESS** Response
+        Server -> Client: File Listing
+    end
+
+    group Failed to retrieve File Listing
+        Server -> Client: **ERROR** Response
+        Server -> Client: Error Reason Message
+    end
+end
+
+group Invalid Session Key
+    Server -> Client: **Denied** Response
+    Server -> Client: Denied Reason Message
+end
+
+group Session Key not provided with Request
+    Server -> Client: **Error** Response
+    Server -> Client: Denied Reason Message
+end
+@enduml
