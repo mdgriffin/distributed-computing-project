@@ -8,7 +8,7 @@ public class DTLSClientHandlerTest {
 
     public static void main(String[] args) {
         try {
-            DTLSClientHandler dtlsClientHandler = new DTLSClientHandler("localhost", 9090);
+            SSLSocketClientHandler dtlsClientHandler = new SSLSocketClientHandler("localhost", 9090);
 
             Message message = dtlsClientHandler.login("jdoe", "password123");
             System.out.println(message.toJson());

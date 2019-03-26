@@ -7,24 +7,14 @@ import javax.net.ssl.*;
 import java.io.*;
 import java.net.ServerSocket;
 
-public class DTLSServer {
+public class SSLSocketServer implements Server {
 
     private int portNum;
     private RequestHandler requestHandler;
 
     private final Logger log = Logger.getLogger(getClass());
-    private static final Logger staticLog = Logger.getLogger(DTLSServer.class.getName());
 
-    public static void main(String[] args) {
-        try {
-            DTLSServer dtlsServer = new DTLSServer(9090, new RequestHandlerImpl());
-            dtlsServer.listen();
-        } catch (IOException exc) {
-            staticLog.debug(exc.getMessage());
-        }
-    }
-
-    public DTLSServer (int portNum, RequestHandler requestHandler) {
+    public SSLSocketServer(int portNum, RequestHandler requestHandler) {
         System.setProperty("javax.net.ssl.keyStore", "./src/main/resources/ssl/server.jks");
         System.setProperty("javax.net.ssl.keyStorePassword", "password123");
         System.setProperty("javax.net.ssl.trustStore", "./src/main/resources/ssl/trustedCerts.jks");
@@ -60,7 +50,7 @@ public class DTLSServer {
 
     }
 
-    public String handleRequest (Message message) throws IOException {
+    private String handleRequest (Message message) throws IOException {
         String result = "";
 
         switch (message.getRequest()) {

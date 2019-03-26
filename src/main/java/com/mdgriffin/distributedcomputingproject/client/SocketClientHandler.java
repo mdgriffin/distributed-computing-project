@@ -8,14 +8,14 @@ import java.net.SocketException;
 import java.nio.file.AccessDeniedException;
 import java.util.*;
 
-public class ClientHandlerImpl implements ClientHandler {
+public class SocketClientHandler implements ClientHandler {
 
     private String hostname;
     private int portnum;
     private String sessionId;
     private SocketHelper socketHelper;
 
-    public ClientHandlerImpl(String hostname, int portNum) throws SocketException {
+    public SocketClientHandler(String hostname, int portNum) throws SocketException {
         this.hostname = hostname;
         this.portnum = portNum;
 

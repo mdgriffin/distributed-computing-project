@@ -1,8 +1,7 @@
 package com.mdgriffin.distributedcomputingproject.gui;
 
 import com.mdgriffin.distributedcomputingproject.client.ClientHandler;
-import com.mdgriffin.distributedcomputingproject.client.ClientHandlerImpl;
-import com.mdgriffin.distributedcomputingproject.client.DTLSClientHandler;
+import com.mdgriffin.distributedcomputingproject.client.SSLSocketClientHandler;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -24,7 +23,7 @@ public class FTPApp extends Application {
 
     public FTPApp () {
         try {
-            clientHandler = new DTLSClientHandler(SERVER_HOSTNAME, SERVER_PORT_NUM);
+            clientHandler = new SSLSocketClientHandler(SERVER_HOSTNAME, SERVER_PORT_NUM);
         } catch (IOException exc) {
             System.out.println(exc.getMessage());
             System.exit(0);

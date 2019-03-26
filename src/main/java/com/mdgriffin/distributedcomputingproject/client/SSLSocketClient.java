@@ -4,7 +4,7 @@ import javax.net.ssl.*;
 import java.io.*;
 import java.net.*;
 
-public class DTLSClient {
+public class SSLSocketClient {
 
     private String remoteHost;
     private int portNum;
@@ -13,7 +13,7 @@ public class DTLSClient {
     private PrintWriter out;
     private BufferedReader in;
 
-    public DTLSClient (String remoteHost, int portNum) throws IOException {
+    public SSLSocketClient(String remoteHost, int portNum) throws IOException {
         // -Djavax.net.debug=all
         System.setProperty("javax.net.ssl.keyStore", "./src/main/resources/ssl/client.jks");
         System.setProperty("javax.net.ssl.keyStorePassword", "password123");

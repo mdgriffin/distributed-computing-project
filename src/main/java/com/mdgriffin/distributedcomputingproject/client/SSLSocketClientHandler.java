@@ -8,13 +8,13 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
-public class DTLSClientHandler implements ClientHandler {
+public class SSLSocketClientHandler implements ClientHandler {
 
     private String sessionId;
-    private DTLSClient dtlsClient;
+    private SSLSocketClient dtlsClient;
 
-    public DTLSClientHandler (String hostname, int portNum) throws IOException {
-        this.dtlsClient = new DTLSClient("127.0.0.1", 9090);
+    public SSLSocketClientHandler(String hostname, int portNum) throws IOException {
+        this.dtlsClient = new SSLSocketClient("127.0.0.1", 9090);
     }
 
     @Override
