@@ -38,3 +38,25 @@
 
 - [ ] Attempting to login when there is no connection causes runnable to run infinitely 
 
+# DTLS
+
+## Examples
+
+- https://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/samples/sslengine/SSLEngineSimpleDemo.java
+- https://github.com/alkarn/sslengine.example/tree/master/src/main/resources
+- http://hg.openjdk.java.net/jdk9/dev/jdk/file/40dc66a99bcc/test/javax/net/ssl/DTLS/DTLSOverDatagram.java
+- https://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/JSSERefGuide.html
+- http://tutorials.jenkov.com/java-nio/index.html
+
+## Cert Creation
+
+From https://stackoverflow.com/questions/3775483/ssl-handshake-exception:
+
+keytool -genkey -alias server-alias -dname "CN=Localhost, OU=Students, O=ITTralee, L=Tralee, ST=Kerry, C=IE" -keyalg RSA -keypass password123 -storepass password123 -keystore server.jks
+keytool -genkey -alias client-alias -dname "CN=Localhost, OU=Students, O=ITTralee, L=Tralee, ST=Kerry, C=IE" -keyalg RSA -keypass password123 -storepass password123 -keystore client.jks
+
+keytool -export -alias client-alias -keystore client.jks -rfc -file client.cer
+keytool -export -alias server-alias -keystore server.jks -rfc -file server.cer
+
+keytool -import -alias client-alias -file client.cer -keystore trustedCerts.jks
+keytool -import -alias server-alias -file server.cer -keystore trustedCerts.jks

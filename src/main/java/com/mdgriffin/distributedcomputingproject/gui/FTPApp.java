@@ -7,7 +7,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import jfxtras.styles.jmetro8.JMetro;
 
 import java.io.IOException;
 
