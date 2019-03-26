@@ -6,10 +6,8 @@ import org.apache.log4j.Logger;
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.*;
 import java.io.*;
-import java.net.ServerSocket;
+import java.net.*;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 
 public class SSLSocketServer implements Server {
 
@@ -51,11 +49,15 @@ public class SSLSocketServer implements Server {
 
     public void listen () throws Exception {
         SSLServerSocketFactory ssf = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
+        //SSLServerSocketFactory ssf = (SSLServerSocketFactory) getServerSocketFactory();
         ServerSocket serverSocket = ssf.createServerSocket(portNum);
+
+        log.debug("Server Listening");
 
         while (true) {
             try {
                 SSLSocket socket = (SSLSocket) serverSocket.accept();
+                log.debug("Server Accepted New Client Connection");
                 BufferedReader in = new BufferedReader((new InputStreamReader(socket.getInputStream())));
                 String line = null;
                 PrintStream out = new PrintStream(socket.getOutputStream());

@@ -4,7 +4,7 @@ import com.mdgriffin.distributedcomputingproject.common.Message;
 
 import java.io.IOException;
 
-public class DTLSClientHandlerTest {
+public class SSLSocketClientHandlerTest {
 
     public static void main(String[] args) {
         try {

@@ -48,6 +48,10 @@
 - https://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/JSSERefGuide.html
 - http://tutorials.jenkov.com/java-nio/index.html
 
+### JSSE DTLS Guide
+
+- https://docs.oracle.com/javase/9/security/java-secure-socket-extension-jsse-reference-guide.htm#JSSEC-GUID-8796681D-06C8-4884-ADE4-782394F6F6FB
+
 ## Cert Creation
 
 Generating the Key Pair:
