@@ -3,9 +3,13 @@ package com.mdgriffin.distributedcomputingproject.server;
 import com.mdgriffin.distributedcomputingproject.common.Message;
 import org.apache.log4j.Logger;
 
+import javax.net.ServerSocketFactory;
 import javax.net.ssl.*;
 import java.io.*;
 import java.net.ServerSocket;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 
 public class SSLSocketServer implements Server {
 
@@ -23,7 +27,29 @@ public class SSLSocketServer implements Server {
         this.requestHandler = requestHandler;
     }
 
-    public void listen () throws IOException {
+    /*
+    private static ServerSocketFactory getServerSocketFactory() throws Exception {
+        SSLServerSocketFactory ssf = null;
+        // set up key manager to do server authentication
+        SSLContext ctx;
+        KeyManagerFactory kmf;
+        KeyStore ks;
+        char[] passphrase = "password123".toCharArray();
+
+        ctx = SSLContext.getInstance("DTLS");
+        kmf = KeyManagerFactory.getInstance("SunX509");
+        ks = KeyStore.getInstance("JKS");
+
+        ks.load(new FileInputStream("./src/main/resources/ssl/server.jks"), passphrase);
+        kmf.init(ks, passphrase);
+        ctx.init(kmf.getKeyManagers(), null, null);
+
+        ssf = ctx.getServerSocketFactory();
+        return ssf;
+    }
+    */
+
+    public void listen () throws Exception {
         SSLServerSocketFactory ssf = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
         ServerSocket serverSocket = ssf.createServerSocket(portNum);
 
@@ -47,7 +73,6 @@ public class SSLSocketServer implements Server {
                 log.debug(exc.getMessage());
             }
         }
-
     }
 
     private String handleRequest (Message message) throws IOException {

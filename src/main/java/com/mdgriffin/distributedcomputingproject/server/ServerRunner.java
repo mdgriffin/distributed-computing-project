@@ -14,6 +14,8 @@ public class ServerRunner {
             dtlsServer.listen();
         } catch (IOException exc) {
             log.debug(exc.getMessage());
+        } catch (Exception exc) {
+            log.debug(exc.getMessage());
         }
     }
 
