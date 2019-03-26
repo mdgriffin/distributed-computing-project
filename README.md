@@ -38,7 +38,7 @@
 
 - [ ] Attempting to login when there is no connection causes runnable to run infinitely 
 
-# DTLS
+# SSL
 
 ## Examples
 
