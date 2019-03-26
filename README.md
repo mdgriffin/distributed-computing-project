@@ -50,13 +50,17 @@
 
 ## Cert Creation
 
-From https://stackoverflow.com/questions/3775483/ssl-handshake-exception:
+Generating the Key Pair:
 
-keytool -genkey -alias server-alias -dname "CN=Localhost, OU=Students, O=ITTralee, L=Tralee, ST=Kerry, C=IE" -keyalg RSA -keypass password123 -storepass password123 -keystore server.jks
-keytool -genkey -alias client-alias -dname "CN=Localhost, OU=Students, O=ITTralee, L=Tralee, ST=Kerry, C=IE" -keyalg RSA -keypass password123 -storepass password123 -keystore client.jks
+    keytool -genkey -alias server-alias -dname "CN=Localhost, OU=Students, O=ITTralee, L=Tralee, ST=Kerry, C=IE" -keyalg RSA -keypass password123 -storepass password123 -keystore server.jks
+    keytool -genkey -alias client-alias -dname "CN=Localhost, OU=Students, O=ITTralee, L=Tralee, ST=Kerry, C=IE" -keyalg RSA -keypass password123 -storepass password123 -keystore client.jks
+    
+Exporting the key pair to a certificate file:
+    
+    keytool -export -alias client-alias -keystore client.jks -rfc -file client.cer
+    keytool -export -alias server-alias -keystore server.jks -rfc -file server.cer
 
-keytool -export -alias client-alias -keystore client.jks -rfc -file client.cer
-keytool -export -alias server-alias -keystore server.jks -rfc -file server.cer
+Importing certificates into trust store:
 
-keytool -import -alias client-alias -file client.cer -keystore trustedCerts.jks
-keytool -import -alias server-alias -file server.cer -keystore trustedCerts.jks
+    keytool -import -alias client-alias -file client.cer -keystore trustedCerts.jks
+    keytool -import -alias server-alias -file server.cer -keystore trustedCerts.jks
