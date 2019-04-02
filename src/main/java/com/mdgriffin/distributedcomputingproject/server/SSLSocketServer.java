@@ -25,7 +25,6 @@ public class SSLSocketServer implements Server {
         this.requestHandler = requestHandler;
     }
 
-    /*
     private static ServerSocketFactory getServerSocketFactory() throws Exception {
         SSLServerSocketFactory ssf = null;
         // set up key manager to do server authentication
@@ -40,16 +39,21 @@ public class SSLSocketServer implements Server {
 
         ks.load(new FileInputStream("./src/main/resources/ssl/server.jks"), passphrase);
         kmf.init(ks, passphrase);
-        ctx.init(kmf.getKeyManagers(), null, null);
+
+        KeyStore ts = KeyStore.getInstance("JKS");
+        ts.load(new FileInputStream("./src/main/resources/ssl/trustedCerts.jks"), passphrase);
+        TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+        tmf.init(ts);
+
+        ctx.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
 
         ssf = ctx.getServerSocketFactory();
         return ssf;
     }
-    */
 
     public void listen () throws Exception {
-        SSLServerSocketFactory ssf = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
-        //SSLServerSocketFactory ssf = (SSLServerSocketFactory) getServerSocketFactory();
+        //SSLServerSocketFactory ssf = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
+        SSLServerSocketFactory ssf = (SSLServerSocketFactory) getServerSocketFactory();
         ServerSocket serverSocket = ssf.createServerSocket(portNum);
 
         log.debug("Server Listening");

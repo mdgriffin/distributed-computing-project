@@ -25,11 +25,14 @@ public class SSLSocketClient {
 
         this.remoteHost = remoteHost;
         this.portNum = portNum;
-        this.ssf = (SSLSocketFactory) SSLSocketFactory.getDefault();
-        //this.ssf = getSocketFactory();
+        //this.ssf = (SSLSocketFactory) SSLSocketFactory.getDefault();
+        try {
+            this.ssf = getSocketFactory();
+        } catch (Exception exc) {
+            this.ssf = (SSLSocketFactory) SSLSocketFactory.getDefault();
+        }
     }
 
-    /*
     private static SSLSocketFactory getSocketFactory() throws Exception {
         SSLSocketFactory ssf = null;
         // set up key manager to do server authentication
@@ -44,13 +47,18 @@ public class SSLSocketClient {
 
         ks.load(new FileInputStream("./src/main/resources/ssl/client.jks"), passphrase);
         kmf.init(ks, passphrase);
-        ctx.init(kmf.getKeyManagers(), null, null);
+
+        KeyStore ts = KeyStore.getInstance("JKS");
+        ts.load(new FileInputStream("./src/main/resources/ssl/trustedCerts.jks"), passphrase);
+        TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+        tmf.init(ts);
+
+        ctx.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
 
         //ssf = ctx.getServerSocketFactory();
         ssf = ctx.getSocketFactory();
         return ssf;
     }
-    */
 
     private void open () throws IOException {
         if (socket == null || socket.isClosed()) {
