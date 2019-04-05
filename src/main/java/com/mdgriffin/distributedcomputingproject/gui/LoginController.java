@@ -54,7 +54,7 @@ public class LoginController {
                         } else {
                             lblLoginError.setText("Error Logging In");
                         }
-                    } catch (IOException exc) {
+                    } catch (Exception exc) {
                         lblLoginError.setText("Error Logging In");
                     }
                 }

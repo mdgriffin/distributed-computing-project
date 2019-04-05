@@ -35,7 +35,13 @@ public class FileManagerController {
 
     @FXML
     public void onBtnLogoffClick () {
-        boolean loggedOff = clientHandler.logoff();
+        boolean loggedOff = false;
+
+        try {
+            loggedOff = clientHandler.logoff();
+        } catch (Exception exc) {
+            System.out.println(exc.getMessage());
+        }
 
         if (loggedOff) {
             context.changeToLogin();
@@ -67,7 +73,7 @@ public class FileManagerController {
             } catch (AccessDeniedException exc) {
                 Alert alert = new Alert(Alert.AlertType.ERROR, "You do not have permission to upload this file");
                 alert.showAndWait();
-            } catch (IOException exc) {
+            } catch (Exception exc) {
                 Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to upload file");
                 alert.showAndWait();
             }
@@ -79,7 +85,7 @@ public class FileManagerController {
             try {
                 files = FXCollections.observableArrayList(clientHandler.list());
                 tblFileList.setItems(files);
-            } catch (IOException exc) {
+            } catch (Exception exc) {
                 Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to retrieve file listing");
                 alert.showAndWait();
             }
@@ -119,7 +125,7 @@ public class FileManagerController {
                                     clientHandler.download(downloadPath, fileDescription.getFilename(), newFilename);
                                     Alert alert = new Alert(Alert.AlertType.INFORMATION, "File Downloaded Successfully");
                                     alert.showAndWait();
-                                } catch (IOException exc) {
+                                } catch (Exception exc) {
                                     Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to download file");
                                     alert.showAndWait();
                                 }

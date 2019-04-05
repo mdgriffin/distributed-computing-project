@@ -324,41 +324,6 @@ public class DTLSSocket {
         return new DatagramPacket(ba, ba.length, socketAddr);
     }
 
-    // produce application packets
-    List<DatagramPacket> produceApplicationPackets(SSLEngine engine, ByteBuffer source, SocketAddress socketAddr) throws Exception {
-        List<DatagramPacket> packets = new ArrayList<>();
-        ByteBuffer appNet = ByteBuffer.allocate(32768);
-        SSLEngineResult r = engine.wrap(source, appNet);
-        appNet.flip();
-
-        SSLEngineResult.Status rs = r.getStatus();
-        if (rs == SSLEngineResult.Status.BUFFER_OVERFLOW) {
-            // the client maximum fragment size config does not work?
-            throw new Exception("Buffer overflow: " +
-                    "incorrect server maximum fragment size");
-        } else if (rs == SSLEngineResult.Status.BUFFER_UNDERFLOW) {
-            // unlikely
-            throw new Exception("Buffer underflow during wraping");
-        } else if (rs == SSLEngineResult.Status.CLOSED) {
-            throw new Exception("SSLEngine has closed");
-        } else if (rs == SSLEngineResult.Status.OK) {
-            // OK
-        } else {
-            throw new Exception("Can't reach here, result is " + rs);
-        }
-
-        // SSLEngineResult.Status.OK:
-        if (appNet.hasRemaining()) {
-            byte[] ba = new byte[appNet.remaining()];
-            appNet.get(ba);
-            DatagramPacket packet =
-                    new DatagramPacket(ba, ba.length, socketAddr);
-            packets.add(packet);
-        }
-
-        return packets;
-    }
-
     // run delegated tasks
     void runDelegatedTasks(SSLEngine engine) throws Exception {
         Runnable runnable;
