@@ -3,39 +3,52 @@ package com.mdgriffin.distributedcomputingproject.client;
 import com.mdgriffin.distributedcomputingproject.common.*;
 
 import java.io.IOException;
+import java.net.DatagramSocket;
+import java.net.InetSocketAddress;
+import java.net.SocketException;
 import java.nio.file.AccessDeniedException;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
-public class SSLSocketClientHandler implements ClientHandler {
-
+public class DTLSClient implements ClientHandler {
     private String sessionId;
-    private SSLSocketClient dtlsClient;
+    private DTLSSocket dtlsSocket;
 
-    public SSLSocketClientHandler(String hostname, int portNum) throws IOException {
-        this.dtlsClient = new SSLSocketClient("127.0.0.1", 9090);
+    public DTLSClient (String serverHostname, int serverPortnum) throws Exception {
+        DatagramSocket socket = new DatagramSocket(7777);
+        InetSocketAddress serverSocketAddress = new InetSocketAddress("localhost",  9090);
+        SocketHelper socketHelper = new SocketHelper(socket);
+
+        socketHelper.send(new DatagramMessage("HELLO", serverHostname, serverPortnum));
+        DatagramMessage serverInitResponse = socketHelper.receive();
+
+        if (serverInitResponse.getMessage().charAt(0) == 'R') {
+            dtlsSocket = new DTLSSocket(socket, serverSocketAddress, "Client");
+        } else {
+            throw new SocketException("Server Declined Hello");
+        }
     }
 
     @Override
-    public void download (String destinationPath, String filename, String newFileName) throws IOException {
+    public void download (String destinationPath, String filename, String newFileName) throws Exception {
         if (!isLoggedIn()) {
             throw new AccessDeniedException("Must be logged in to download files");
         }
 
         FileSystem fs = new FileSystemImpl(destinationPath);
 
-        dtlsClient.send(new Message(
+        dtlsSocket.send(new Message(
                 Request.DOWNLOAD,
                 null,
                 Arrays.asList(
-                    new KeyValue("session_id", sessionId),
-                    new KeyValue("filename", filename)
+                        new KeyValue("session_id", sessionId),
+                        new KeyValue("filename", filename)
                 ),
                 null
-        ).toJson());
+        ));
 
-        Message serverMessage = Message.fromJson(dtlsClient.receive());
+        Message serverMessage = dtlsSocket.receive();
         Response serverResponse = serverMessage.getResponse();
         String message = serverMessage.getHeaderValue("message");
 
@@ -50,12 +63,12 @@ public class SSLSocketClientHandler implements ClientHandler {
     }
 
     @Override
-    public void download(String destinationPath, String filename) throws IOException {
+    public void download(String destinationPath, String filename) throws Exception {
         download(destinationPath, filename, filename);
     }
 
     @Override
-    public boolean upload (String path, String filename) throws IOException {
+    public boolean upload (String path, String filename) throws Exception {
         if (!isLoggedIn()) {
             throw new AccessDeniedException("Must be logged in to upload files");
         }
@@ -63,17 +76,17 @@ public class SSLSocketClientHandler implements ClientHandler {
         FileSystem fs = new FileSystemImpl("");
         String fileContents = Base64.getEncoder().encodeToString(fs.readFile(path));
 
-        dtlsClient.send(new Message(
-            Request.UPLOAD,
-            null,
-            Arrays.asList(
-                new KeyValue("session_id", sessionId),
-                new KeyValue("filename", filename)
-            ),
-            fileContents
-        ).toJson());
+        dtlsSocket.send(new Message(
+                Request.UPLOAD,
+                null,
+                Arrays.asList(
+                        new KeyValue("session_id", sessionId),
+                        new KeyValue("filename", filename)
+                ),
+                fileContents
+        ));
 
-        Message serverMessage = Message.fromJson(dtlsClient.receive());
+        Message serverMessage = dtlsSocket.receive();
         String message = serverMessage.getHeaderValue("message");
         Response serverResponse = serverMessage.getResponse();
 
@@ -87,21 +100,22 @@ public class SSLSocketClientHandler implements ClientHandler {
     }
 
     @Override
-    public List<FileDescription> list () throws IOException {
+    public List<FileDescription> list () throws Exception {
         if (!isLoggedIn()) {
             throw new AccessDeniedException("Must be logged in!");
         }
 
-        dtlsClient.send(new Message(
+        dtlsSocket.send(new Message(
                 Request.LIST,
                 null,
                 Arrays.asList(
                         new KeyValue("session_id", sessionId)
                 ),
                 ""
-        ).toJson());
+        ));
 
-        Message serverMessage = Message.fromJson(dtlsClient.receive());
+        //Message serverMessage = Message.fromJson(socketHelper.receive().getMessage());
+        Message serverMessage = dtlsSocket.receive();
         Response serverResponse = serverMessage.getResponse();
 
         if (serverResponse.equals(Response.DENIED)) {
@@ -119,19 +133,19 @@ public class SSLSocketClientHandler implements ClientHandler {
     }
 
     @Override
-    public boolean logoff() {
+    public boolean logoff() throws Exception {
         if (isLoggedIn()) {
             try {
-                dtlsClient.send(new Message(
+                dtlsSocket.send(new Message(
                         Request.LOGOFF,
                         null,
                         Arrays.asList(
                                 new KeyValue("session_id", sessionId)
                         ),
                         ""
-                ).toJson());
+                ));
 
-                Message serverMessage = Message.fromJson(dtlsClient.receive());
+                Message serverMessage = dtlsSocket.receive();
 
                 if (serverMessage.getResponse().equals(Response.SUCCESS)) {
                     return true;
@@ -144,18 +158,18 @@ public class SSLSocketClientHandler implements ClientHandler {
     }
 
     @Override
-    public Message login(String username, String password) throws IOException {
-        dtlsClient.send(new Message(
+    public Message login (String username, String password) throws Exception {
+        dtlsSocket.send(new Message(
                 Request.LOGIN,
                 null,
                 Arrays.asList(
-                    new KeyValue("username", username),
-                    new KeyValue("password", password)
+                        new KeyValue("username", username),
+                        new KeyValue("password", password)
                 ),
                 ""
-        ).toJson());
+        ));
 
-        Message serverMessage = Message.fromJson(dtlsClient.receive());
+        Message serverMessage = dtlsSocket.receive();
 
         if (serverMessage.getResponse().equals(Response.SUCCESS)) {
             setSessionId(serverMessage.getHeaderValue("session_id"));
@@ -168,5 +182,4 @@ public class SSLSocketClientHandler implements ClientHandler {
     public boolean isLoggedIn () {
         return sessionId != null;
     }
-
 }
