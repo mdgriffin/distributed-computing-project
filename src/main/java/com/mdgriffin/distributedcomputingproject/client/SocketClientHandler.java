@@ -181,17 +181,6 @@ public class SocketClientHandler implements ClientHandler {
         private String sessionId;
         private DTLSSocket dtlsSocket;
 
-        // TODO: Example Usage
-        /*.
-        public static void main(String[] args) {
-            try {
-                DTLSClient dtlsClient = new DTLSClient("localhost", 9090);
-            } catch (Exception exc) {
-                System.out.println(exc.getMessage());
-            }
-        }
-        */
-
         public DTLSClient (String serverHostname, int serverPortnum) throws Exception {
             DatagramSocket socket = new DatagramSocket(7777);
             InetSocketAddress serverSocketAddress = new InetSocketAddress("localhost",  9090);
