@@ -51,7 +51,7 @@ public class DTLSSocket {
     }
 
     // handshake
-    void handshake(SSLEngine engine, DatagramSocket socket, SocketAddress peerAddr, String side) throws Exception {
+    private void handshake(SSLEngine engine, DatagramSocket socket, SocketAddress peerAddr, String side) throws Exception {
 
         boolean endLoops = false;
         int loops = MAX_HANDSHAKE_LOOPS;
@@ -207,7 +207,7 @@ public class DTLSSocket {
         }
     }
 
-    Message receive() throws Exception {
+    public Message receive() throws Exception {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         boolean isLast = false;
 
@@ -320,12 +320,11 @@ public class DTLSSocket {
         return false;
     }
 
-    DatagramPacket createHandshakePacket(byte[] ba, SocketAddress socketAddr) {
+    private DatagramPacket createHandshakePacket(byte[] ba, SocketAddress socketAddr) {
         return new DatagramPacket(ba, ba.length, socketAddr);
     }
 
-    // run delegated tasks
-    void runDelegatedTasks(SSLEngine engine) throws Exception {
+    private void runDelegatedTasks(SSLEngine engine) throws Exception {
         Runnable runnable;
         while ((runnable = engine.getDelegatedTask()) != null) {
             runnable.run();
@@ -338,7 +337,7 @@ public class DTLSSocket {
     }
 
     // retransmission if timeout
-    boolean onReceiveTimeout(SSLEngine engine, SocketAddress socketAddr,
+    private boolean onReceiveTimeout(SSLEngine engine, SocketAddress socketAddr,
                              String side, List<DatagramPacket> packets) throws Exception {
 
         SSLEngineResult.HandshakeStatus hs = engine.getHandshakeStatus();
@@ -351,7 +350,7 @@ public class DTLSSocket {
     }
 
     // get DTSL context
-    SSLContext getDTLSContext() throws Exception {
+    private SSLContext getDTLSContext() throws Exception {
         KeyStore ks = KeyStore.getInstance("JKS");
         KeyStore ts = KeyStore.getInstance("JKS");
 

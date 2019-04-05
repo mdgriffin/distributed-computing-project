@@ -1,16 +1,11 @@
-package com.mdgriffin.distributedcomputingproject.common;
+package com.mdgriffin.distributedcomputingproject.server;
 
-import com.mdgriffin.distributedcomputingproject.server.RequestHandler;
-import com.mdgriffin.distributedcomputingproject.server.RequestHandlerImpl;
-import com.mdgriffin.distributedcomputingproject.server.Server;
+import com.mdgriffin.distributedcomputingproject.common.*;
 
 import java.io.IOException;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class DTLSServer implements Server {
