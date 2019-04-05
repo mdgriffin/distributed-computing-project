@@ -9,19 +9,19 @@ import java.util.List;
 
 public interface ClientHandler {
 
-    Message login (String username, String password) throws IOException;
+    Message login (String username, String password) throws Exception;
 
-    boolean upload(String path, String filename)  throws IOException;
+    boolean upload(String path, String filename)  throws Exception;
 
-    void download(String destinationPath, String filename, String newFileName)  throws IOException;
+    void download(String destinationPath, String filename, String newFileName)  throws Exception;
 
-    void download(String destinationPath, String filename)  throws IOException;
+    void download(String destinationPath, String filename)  throws Exception;
 
-    List<FileDescription> list ()  throws IOException;
+    List<FileDescription> list ()  throws Exception;
 
     void setSessionId(String sessionId);
 
-    boolean logoff ();
+    boolean logoff () throws Exception;
 
     boolean isLoggedIn ();
 }
