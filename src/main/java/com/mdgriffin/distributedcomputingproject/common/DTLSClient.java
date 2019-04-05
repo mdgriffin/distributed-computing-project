@@ -5,6 +5,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 public class DTLSClient {
     public static void main(String[] args) {
@@ -12,10 +13,15 @@ public class DTLSClient {
             DatagramSocket clientSocket = new DatagramSocket(7777);
             InetSocketAddress serverSocketAddr = new InetSocketAddress("localhost", 9090);
             DTLSSocket dtlsSocket = new DTLSSocket(clientSocket, serverSocketAddr, "Client");
-            dtlsSocket.send("Hello from Client".getBytes(), serverSocketAddr);
+            dtlsSocket.send(new Message(
+                Request.LOGIN,
+                null,
+                Arrays.asList(new KeyValue("message", "Hello From Client")),
+                ""
+            ));
 
-            byte[] response = dtlsSocket.receive();
-            System.out.println(new String(response));
+            Message response = dtlsSocket.receive();
+            System.out.println(response.toJson());
         } catch (Exception exc) {
             System.out.println(exc);
         }

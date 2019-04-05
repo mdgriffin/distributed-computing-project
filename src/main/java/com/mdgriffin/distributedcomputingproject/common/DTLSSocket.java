@@ -56,6 +56,7 @@ public class DTLSSocket {
     private String keyFilename = "./src/main/resources/ssl/server.jks";
     private String trustFilename = "./src/main/resources/ssl/trustedCerts.jks";
     private static String passwd = "password123";
+    private InetSocketAddress peerSocketAddr;
 
     private SSLEngine engine;
     private DatagramSocket socket;
@@ -69,10 +70,10 @@ public class DTLSSocket {
         }
 
         this.socket = socket;
+        this.peerSocketAddr = peerSocketAddr;
 
         // handshaking
         handshake(engine, socket, peerSocketAddr, side);
-
     }
 
     SSLEngine createSSLEngine(boolean isClient) throws Exception {
@@ -89,8 +90,7 @@ public class DTLSSocket {
     }
 
     // handshake
-    void handshake(SSLEngine engine, DatagramSocket socket,
-                   SocketAddress peerAddr, String side) throws Exception {
+    void handshake(SSLEngine engine, DatagramSocket socket, SocketAddress peerAddr, String side) throws Exception {
 
         boolean endLoops = false;
         int loops = MAX_HANDSHAKE_LOOPS;
@@ -228,48 +228,55 @@ public class DTLSSocket {
         }
     }
 
-    public void send(byte[] appData, SocketAddress peerAddr) throws Exception {
-        ByteBuffer source = ByteBuffer.allocate(appData.length);
-        source.put(appData);
-        source.flip();
+    public void send(Message message) throws Exception {
+        byte[] messageBytes = message.toJson().getBytes();
+        PacketSegmenter packetSegmenter = new PacketSegmenter(messageBytes, MAXIMUM_PACKET_SIZE);
 
-        ByteBuffer appNet = ByteBuffer.allocate(32768);
-        SSLEngineResult r = engine.wrap(source, appNet);
-        appNet.flip();
+        while (packetSegmenter.hasNext()) {
+            byte[] sendBuffer = packetSegmenter.next();
+            ByteBuffer source = ByteBuffer.allocate(sendBuffer.length);
+            source.put(sendBuffer);
+            source.flip();
 
-        byte[] ba = new byte[appNet.remaining()];
-        appNet.get(ba);
+            ByteBuffer appNet = ByteBuffer.allocate(32768);
+            SSLEngineResult r = engine.wrap(source, appNet);
+            appNet.flip();
 
-        DatagramPacket packet = new DatagramPacket(ba, ba.length, peerAddr);
+            byte[] ba = new byte[appNet.remaining()];
+            appNet.get(ba);
 
-        socket.send(packet);
+            socket.send(new DatagramPacket(ba, ba.length, peerSocketAddr));
+        }
     }
 
-    byte[] receive() throws Exception {
-        //ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        byte[] result = new byte[]{};
+    Message receive() throws Exception {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        boolean isLast = false;
 
-        int loops = MAX_RECEIVE_LOOPS;
-        while (true) {
-            if (--loops < 0) {
-                throw new RuntimeException("Too much loops to receive application data");
-            }
+        while (!isLast) {
+            int loops = MAX_RECEIVE_LOOPS;
+            while (true) {
+                if (--loops < 0) {
+                    throw new RuntimeException("Too many loops to receive application data");
+                }
 
-            byte[] buf = new byte[BUFFER_SIZE];
-            DatagramPacket packet = new DatagramPacket(buf, buf.length);
-            socket.receive(packet);
-            ByteBuffer netBuffer = ByteBuffer.wrap(buf, 0, packet.getLength());
-            ByteBuffer recBuffer = ByteBuffer.allocate(BUFFER_SIZE);
-            SSLEngineResult rs = engine.unwrap(netBuffer, recBuffer);
-            recBuffer.flip();
-            if (recBuffer.remaining() != 0) {
-                //outputStream.write(recBuffer.array());
-                result = recBuffer.array();
-                break;
+                byte[] buf = new byte[BUFFER_SIZE];
+                DatagramPacket packet = new DatagramPacket(buf, buf.length);
+                socket.receive(packet);
+                ByteBuffer netBuffer = ByteBuffer.wrap(buf, 0, packet.getLength());
+                ByteBuffer recBuffer = ByteBuffer.allocate(BUFFER_SIZE);
+                SSLEngineResult rs = engine.unwrap(netBuffer, recBuffer);
+                recBuffer.flip();
+                if (recBuffer.remaining() != 0) {
+                    byte[] receiveBuffer = recBuffer.array();
+                    outputStream.write(Arrays.copyOfRange(receiveBuffer, 1, receiveBuffer.length));
+                    isLast = receiveBuffer[0] != 0;
+                    break;
+                }
             }
         }
 
-        return result;
+        return Message.fromJson(new String(outputStream.toByteArray()));
     }
 
     // produce handshake packets
