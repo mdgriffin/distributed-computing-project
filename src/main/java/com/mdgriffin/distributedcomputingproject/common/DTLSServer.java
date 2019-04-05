@@ -13,17 +13,20 @@ public class DTLSServer {
                 DatagramSocket serverSocket = new DatagramSocket(9090);
                 InetSocketAddress clientSocketAddr = new InetSocketAddress("localhost",  7777);
                 DTLSSocket dtlsSocket = new DTLSSocket(serverSocket, clientSocketAddr, "Server");
-                ByteBuffer bf = dtlsSocket.receive();
-                String s = StandardCharsets.UTF_8.decode(bf).toString();
-                System.out.println("Server Receiving");
-                System.out.println(s);
 
-                String message = "Hello from Server";
-                ByteBuffer messageBuffer = ByteBuffer.allocate(message.getBytes().length);
-                messageBuffer.put(message.getBytes());
-                messageBuffer.flip();
+                byte[] message = dtlsSocket.receive();
+                System.out.println(new String(message));
+                //ByteBuffer bf = dtlsSocket.receive();
+                //String s = StandardCharsets.UTF_8.decode(bf).toString();
+                //System.out.println("Server Receiving");
+                //System.out.println(s);
 
-                dtlsSocket.send(messageBuffer, clientSocketAddr);
+                //String message = "Hello from Server";
+                //ByteBuffer messageBuffer = ByteBuffer.allocate(message.getBytes().length);
+                //messageBuffer.put(message.getBytes());
+                //messageBuffer.flip();
+
+                //dtlsSocket.send(messageBuffer, clientSocketAddr);
             } catch (Exception exc) {
                 System.out.println(exc);
             }

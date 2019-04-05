@@ -228,9 +228,13 @@ public class DTLSSocket {
     }
 
     // deliver application data
-    public void send(ByteBuffer appData, SocketAddress peerAddr) throws Exception {
+    public void send(byte[] appData, SocketAddress peerAddr) throws Exception {
+        ByteBuffer source = ByteBuffer.allocate(appData.length);
+        source.put(appData);
+        source.flip();
+
         ByteBuffer appNet = ByteBuffer.allocate(32768);
-        SSLEngineResult r = engine.wrap(appData, appNet);
+        SSLEngineResult r = engine.wrap(source, appNet);
         appNet.flip();
 
         byte[] ba = new byte[appNet.remaining()];
@@ -241,7 +245,7 @@ public class DTLSSocket {
         socket.send(packet);
     }
 
-    public ByteBuffer receive() throws Exception {
+    public byte[] receive() throws Exception {
         byte[] buf = new byte[BUFFER_SIZE];
         DatagramPacket packet = new DatagramPacket(buf, buf.length);
         socket.receive(packet);
@@ -250,7 +254,8 @@ public class DTLSSocket {
         ByteBuffer recBuffer = ByteBuffer.allocate(BUFFER_SIZE);
         SSLEngineResult rs = engine.unwrap(netBuffer, recBuffer);
         recBuffer.flip();
-        return recBuffer;
+
+        return recBuffer.array();
     }
 
     // produce handshake packets
