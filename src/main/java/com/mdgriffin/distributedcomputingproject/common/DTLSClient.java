@@ -12,9 +12,10 @@ public class DTLSClient {
             DatagramSocket clientSocket = new DatagramSocket(7777);
             InetSocketAddress serverSocketAddr = new InetSocketAddress("localhost", 9090);
             DTLSSocket dtlsSocket = new DTLSSocket(clientSocket, serverSocketAddr, "Client");
-            String message = "Hello from Client";
+            dtlsSocket.send("Hello from Client".getBytes(), serverSocketAddr);
 
-            dtlsSocket.send(message.getBytes(), serverSocketAddr);
+            byte[] response = dtlsSocket.receive();
+            System.out.println(new String(response));
         } catch (Exception exc) {
             System.out.println(exc);
         }

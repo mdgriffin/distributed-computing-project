@@ -49,6 +49,7 @@ import java.util.concurrent.*;
 public class DTLSSocket {
 
     private static int MAX_HANDSHAKE_LOOPS = 200;
+    private static int MAX_RECEIVE_LOOPS = 60;
     private static int BUFFER_SIZE = 1024;
     private static int MAXIMUM_PACKET_SIZE = 1024;
 
@@ -227,7 +228,6 @@ public class DTLSSocket {
         }
     }
 
-    // deliver application data
     public void send(byte[] appData, SocketAddress peerAddr) throws Exception {
         ByteBuffer source = ByteBuffer.allocate(appData.length);
         source.put(appData);
@@ -245,17 +245,31 @@ public class DTLSSocket {
         socket.send(packet);
     }
 
-    public byte[] receive() throws Exception {
-        byte[] buf = new byte[BUFFER_SIZE];
-        DatagramPacket packet = new DatagramPacket(buf, buf.length);
-        socket.receive(packet);
+    byte[] receive() throws Exception {
+        //ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        byte[] result = new byte[]{};
 
-        ByteBuffer netBuffer = ByteBuffer.wrap(buf, 0, packet.getLength());
-        ByteBuffer recBuffer = ByteBuffer.allocate(BUFFER_SIZE);
-        SSLEngineResult rs = engine.unwrap(netBuffer, recBuffer);
-        recBuffer.flip();
+        int loops = MAX_RECEIVE_LOOPS;
+        while (true) {
+            if (--loops < 0) {
+                throw new RuntimeException("Too much loops to receive application data");
+            }
 
-        return recBuffer.array();
+            byte[] buf = new byte[BUFFER_SIZE];
+            DatagramPacket packet = new DatagramPacket(buf, buf.length);
+            socket.receive(packet);
+            ByteBuffer netBuffer = ByteBuffer.wrap(buf, 0, packet.getLength());
+            ByteBuffer recBuffer = ByteBuffer.allocate(BUFFER_SIZE);
+            SSLEngineResult rs = engine.unwrap(netBuffer, recBuffer);
+            recBuffer.flip();
+            if (recBuffer.remaining() != 0) {
+                //outputStream.write(recBuffer.array());
+                result = recBuffer.array();
+                break;
+            }
+        }
+
+        return result;
     }
 
     // produce handshake packets

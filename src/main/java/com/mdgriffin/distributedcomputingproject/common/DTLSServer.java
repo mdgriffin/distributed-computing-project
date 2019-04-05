@@ -16,17 +16,8 @@ public class DTLSServer {
 
                 byte[] message = dtlsSocket.receive();
                 System.out.println(new String(message));
-                //ByteBuffer bf = dtlsSocket.receive();
-                //String s = StandardCharsets.UTF_8.decode(bf).toString();
-                //System.out.println("Server Receiving");
-                //System.out.println(s);
 
-                //String message = "Hello from Server";
-                //ByteBuffer messageBuffer = ByteBuffer.allocate(message.getBytes().length);
-                //messageBuffer.put(message.getBytes());
-                //messageBuffer.flip();
-
-                //dtlsSocket.send(messageBuffer, clientSocketAddr);
+                dtlsSocket.send("Hello From Server".getBytes(), clientSocketAddr);
             } catch (Exception exc) {
                 System.out.println(exc);
             }
