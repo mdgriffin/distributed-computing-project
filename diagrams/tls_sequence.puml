@@ -1,0 +1,12 @@
+@startuml
+Client -> Server: Client Hello\nSupported Cipher Suites
+Server --> Client: Server Hello\nChosen Cipher Suite
+Server --> Client: Server Certificate
+Server --> Client: Key Exchange
+Server --> Client: Server Hello Done
+Client -> Server: Client Key Exchange\nPre-master Secret
+Client -> Server: Change Cipher Spec
+Client -> Server: Finished
+Server --> Client: Change Cipher Spec
+Server --> Client: Finished
+@enduml
