@@ -42,11 +42,11 @@
 
 ## Examples
 
-- https://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/samples/sslengine/SSLEngineSimpleDemo.java
-- https://github.com/alkarn/sslengine.example/tree/master/src/main/resources
-- http://hg.openjdk.java.net/jdk9/dev/jdk/file/40dc66a99bcc/test/javax/net/ssl/DTLS/DTLSOverDatagram.java
-- https://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/JSSERefGuide.html
-- http://tutorials.jenkov.com/java-nio/index.html
+- [Simple SSL Engine Demo from Java8 Docs](https://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/samples/sslengine/SSLEngineSimpleDemo.java)
+- [SSLEngine Example from GitHub](https://github.com/alkarn/sslengine.example/tree/master/src/main/resources)
+- [Java9 Test Cases - DTLS Over Datagram Test case](http://hg.openjdk.java.net/jdk9/dev/jdk/file/40dc66a99bcc/test/javax/net/ssl/DTLS/DTLSOverDatagram.java)
+- [JSSE Guide from Java8 Docs](https://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/JSSERefGuide.html)
+- [Java Nio Tutorial - Jenkov](http://tutorials.jenkov.com/java-nio/index.html)
 
 ### JSSE DTLS Guide
 
