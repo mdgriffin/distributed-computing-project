@@ -128,7 +128,7 @@ public class DTLSSocket {
                         logger.info(side + ": Warning: " + ste);
 
                         List<DatagramPacket> packets = new ArrayList<>();
-                        boolean finished = onReceiveTimeout(engine, peerSocketAddr, side, packets);
+                        boolean finished = onReceiveTimeout(packets);
 
                         for (DatagramPacket p : packets) {
                             socket.send(p);
@@ -186,7 +186,7 @@ public class DTLSSocket {
                 }
             } else if (hs == SSLEngineResult.HandshakeStatus.NEED_WRAP) {
                 List<DatagramPacket> packets = new ArrayList<>();
-                boolean finished = produceHandshakePackets(engine, peerSocketAddr, side, packets);
+                boolean finished = produceHandshakePackets(packets);
 
                 for (DatagramPacket p : packets) {
                     socket.send(p);
@@ -199,7 +199,7 @@ public class DTLSSocket {
                     endLoops = true;
                 }
             } else if (hs == SSLEngineResult.HandshakeStatus.NEED_TASK) {
-                runDelegatedTasks(engine);
+                runDelegatedTasks();
             } else if (hs == SSLEngineResult.HandshakeStatus.NOT_HANDSHAKING) {
                 logger.info(side + ": Handshake status is NOT_HANDSHAKING, finish the loop");
                 endLoops = true;
@@ -236,8 +236,7 @@ public class DTLSSocket {
 
 
     // produce handshake packets
-    private boolean produceHandshakePackets(SSLEngine engine, SocketAddress socketAddr,
-                                    String side, List<DatagramPacket> packets) throws Exception {
+    private boolean produceHandshakePackets(List<DatagramPacket> packets) throws Exception {
         boolean endLoops = false;
         int loops = MAX_HANDSHAKE_LOOPS;
         while (!endLoops) {
@@ -279,7 +278,7 @@ public class DTLSSocket {
             if (oNet.hasRemaining()) {
                 byte[] ba = new byte[oNet.remaining()];
                 oNet.get(ba);
-                DatagramPacket packet = new DatagramPacket(ba, ba.length, socketAddr);
+                DatagramPacket packet = new DatagramPacket(ba, ba.length, peerSocketAddr);
                 packets.add(packet);
             }
 
@@ -293,7 +292,7 @@ public class DTLSSocket {
             SSLEngineResult.HandshakeStatus nhs = hs;
             while (!endInnerLoop) {
                 if (nhs == SSLEngineResult.HandshakeStatus.NEED_TASK) {
-                    runDelegatedTasks(engine);
+                    runDelegatedTasks();
                 } else if (nhs == SSLEngineResult.HandshakeStatus.NEED_UNWRAP ||
                         nhs == SSLEngineResult.HandshakeStatus.NEED_UNWRAP_AGAIN ||
                         nhs == SSLEngineResult.HandshakeStatus.NOT_HANDSHAKING) {
@@ -317,7 +316,7 @@ public class DTLSSocket {
         return false;
     }
 
-    private void runDelegatedTasks(SSLEngine engine) throws Exception {
+    private void runDelegatedTasks() throws Exception {
         Runnable runnable;
         while ((runnable = engine.getDelegatedTask()) != null) {
             runnable.run();
@@ -330,14 +329,13 @@ public class DTLSSocket {
     }
 
     // retransmission if timeout
-    private boolean onReceiveTimeout(SSLEngine engine, SocketAddress socketAddr,
-                             String side, List<DatagramPacket> packets) throws Exception {
+    private boolean onReceiveTimeout(List<DatagramPacket> packets) throws Exception {
         SSLEngineResult.HandshakeStatus hs = engine.getHandshakeStatus();
         if (hs == SSLEngineResult.HandshakeStatus.NOT_HANDSHAKING) {
             return false;
         } else {
             // retransmission of handshake messages
-            return produceHandshakePackets(engine, socketAddr, side, packets);
+            return produceHandshakePackets(packets);
         }
     }
 
