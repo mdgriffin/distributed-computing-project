@@ -59,12 +59,12 @@ public class DTLSSocket {
             source.put(sendBuffer);
             source.flip();
 
-            ByteBuffer appNet = ByteBuffer.allocate(32768);
-            SSLEngineResult r = engine.wrap(source, appNet);
-            appNet.flip();
+            ByteBuffer dest = ByteBuffer.allocate(32768);
+            SSLEngineResult r = engine.wrap(source, dest);
+            dest.flip();
 
-            byte[] ba = new byte[appNet.remaining()];
-            appNet.get(ba);
+            byte[] ba = new byte[dest.remaining()];
+            dest.get(ba);
 
             socket.send(new DatagramPacket(ba, ba.length, peerSocketAddr));
         }
