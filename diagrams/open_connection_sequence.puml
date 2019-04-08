@@ -1,0 +1,6 @@
+@startuml
+Client -> Server: HELLO
+Server --> Client: READY
+Server -> Server: Await TLS Handshake
+Client -> Server: Intiate TLS Handshake
+@enduml
