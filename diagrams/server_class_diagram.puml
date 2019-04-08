@@ -65,29 +65,6 @@ PackageSegmenter --|> Iterator
 
 }
 
-package client {
-
-interface ClientHandler {
-    +login (String username, String password):Message
-    +upload(String path, String filename):boolean
-    +download(String destinationPath, String filename, String newFileName)  throws IOException;
-    +download(String destinationPath, String filename)  throws IOException;
-    +list ():List<FileDescription>
-    +setSessionId(String sessionId);
-    +logoff ():boolean
-    +isLoggedIn ():boolean
-}
-
-class DTLSClient
-
-DTLSClient ..|> ClientHandler
-DTLSClient --o DTLSSocket
-DTLSClient --o SocketHelper
-DTLSClient --o FileSystem
-DTLSClient --o Message
-
-}
-
 package server {
 
 interface Server {
@@ -140,30 +117,5 @@ ListAuthentication ..|> Authentication
 ListAuthentication --* Session
 
 RequestHandlerImpl --o SocketHelper
-}
-
-package gui {
-
-class FTPApp {
-    +start(Stage)
-    +changeToLogin()
-    +changeToFileManager()
-    +getClientHandler():ClientHandler
-    +Stage:getStage()
-}
-
-class LoginController {
-    +setContext(FTPApp context)
-}
-
-class FileManagerController {
-   +setContext(FTPApp context)
-}
-
-FTPApp --o LoginController
-FTPApp --o FileManagerController
-
-FTPApp --o ClientHandler
-
 }
 @enduml

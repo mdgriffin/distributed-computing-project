@@ -1,0 +1,115 @@
+@startuml
+package common {
+
+    class SocketHelper
+    class DTLSSocket
+
+    interface FileSystem {
+        +saveFile(String path, byte[] data)
+        +readFile(String path):byte[]
+        +deleteFile (String path):boolean
+        +createDirectory(String path):boolean
+        +deleteDirectory (String path):boolean
+        +listDirectory (String path):List<FileDescription>
+        +listDirectory (String path, boolean includeDirectories):List<FileDescription>
+        +directoryExists (String path):boolean
+        +fileExists (String path):boolean
+    }
+
+    enum Request {
+        LOGIN,
+        LOGOFF,
+        UPLOAD,
+        DOWNLOAD,
+        LIST
+    }
+
+    enum Response {
+        SUCCESS,
+        ERROR,
+        DENIED,
+        NOT_FOUND
+    }
+
+    class PackageSegmenter {
+        PackageSegmenter(packet:byte[], packetSize:int)
+        int getNumPackets
+    }
+
+    class Message {
+        + toJson():String
+        # fromJSon(Message):void
+        +getRequest():Request
+        +getResponse():Response
+        +getBody():String
+        +getHeader():List<KeyValue>
+    }
+
+    class KeyValue {
+        +getKey():String
+        +getValue():String
+    }
+
+    Message --* Request
+    Message --* Response
+    Message --* KeyValue
+
+    SocketHelper --o PackageSegmenter
+
+    interface Iterator {
+        boolean hasNext
+        byte[] next
+    }
+
+    PackageSegmenter --|> Iterator
+
+}
+
+package client {
+
+    interface ClientHandler {
+        +login (String username, String password):Message
+        +upload(String path, String filename):boolean
+        +download(String destinationPath, String filename, String newFileName)  throws IOException;
+        +download(String destinationPath, String filename)  throws IOException;
+        +list ():List<FileDescription>
+        +setSessionId(String sessionId);
+        +logoff ():boolean
+        +isLoggedIn ():boolean
+    }
+
+    class DTLSClient
+
+    DTLSClient ..|> ClientHandler
+    DTLSClient --o DTLSSocket
+    DTLSClient --o SocketHelper
+    DTLSClient --o FileSystem
+    DTLSClient --o Message
+
+}
+
+package gui {
+
+    class FTPApp {
+        +start(Stage)
+        +changeToLogin()
+        +changeToFileManager()
+        +getClientHandler():ClientHandler
+        +Stage:getStage()
+    }
+
+    class LoginController {
+        +setContext(FTPApp context)
+    }
+
+    class FileManagerController {
+       +setContext(FTPApp context)
+    }
+
+    FTPApp --o LoginController
+    FTPApp --o FileManagerController
+
+    FTPApp --o ClientHandler
+
+}
+@enduml
