@@ -80,6 +80,7 @@ public class DTLSServer implements Server {
                 break;
             case LOGOFF:
                 responseMessage = requestHandler.logoff(requestMessage);
+                break;
             default:
                 responseMessage = new Message(
                         requestMessage.getRequest(),
