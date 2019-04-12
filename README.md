@@ -1,5 +1,20 @@
 # Distributed Computing Project
 
+## Running
+
+Installing dependencies:
+
+``mvn install``
+
+Running the server:
+
+``mvn exec:java@server-execution``
+
+Running the GUI:
+
+``mvn exec:java@gui-execution``
+
+
 ## To-Do
 
 - [x] Create Server

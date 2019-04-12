@@ -73,15 +73,24 @@
                 <version>1.6.0</version>
                 <executions>
                     <execution>
+                        <id>server-execution</id>
                         <goals>
                             <goal>java</goal>
                         </goals>
+                        <configuration>
+                            <mainClass>com.mdgriffin.distributedcomputingproject.server.DTLSServer</mainClass>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>gui-execution</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>com.mdgriffin.distributedcomputingproject.gui.FTPApp</mainClass>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <mainClass>com.mdgriffin.distributedcomputingproject.gui.FTPApp</mainClass>
-                    <executable>java</executable>
-                </configuration>
             </plugin>
         </plugins>
     </build>
